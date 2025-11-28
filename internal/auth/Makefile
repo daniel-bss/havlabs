@@ -2,11 +2,8 @@ include .env
 
 DB_URL=$(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSLMODE)
 
-proto:
-	rm -f pb/*.go
-	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
-	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-	proto/*.proto
+evans:
+	evans -r repl -p 9090
 
 sqlc:
 	sqlc generate
@@ -28,5 +25,14 @@ new_migration:
 
 run:
 	go run ./cmd
+
+renew_env_example:
+	cp .env .env.example
+
+proto:
+	rm -f pb/*.go
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	proto/*.proto
 
 .PHONY: proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 

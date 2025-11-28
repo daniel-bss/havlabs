@@ -4,7 +4,7 @@ package pb;
 
 import "user.proto";
 
-option go_package = "github.com/daniel-bss/havlabs/auth";
+option go_package = "github.com/daniel-bss/havlabs/auth/pb";
 
 message CreateUserRequest {
     string username = 1;
