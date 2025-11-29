@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	_ "github.com/daniel-bss/havlabs/internal/auth/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

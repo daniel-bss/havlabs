@@ -1,8 +1,8 @@
 package dtos
 
 import (
-	db "github.com/daniel-bss/havlabs/auth/db/sqlc"
-	"github.com/daniel-bss/havlabs/auth/pb"
+	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
+	"github.com/daniel-bss/havlabs/internal/auth/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

@@ -136,7 +136,7 @@ const file_rpc_create_user_proto_rawDesc = "" +
 	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x1a\n" +
 	"\bpassword\x18\x04 \x01(\tR\bpassword\"2\n" +
 	"\x12CreateUserResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB'Z%github.com/daniel-bss/havlabs/auth/pbb\x06proto3"
+	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var (
 	file_rpc_create_user_proto_rawDescOnce sync.Once

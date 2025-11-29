@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/daniel-bss/havlabs/auth/token"
+	"github.com/daniel-bss/havlabs/internal/auth/token"
 	"google.golang.org/grpc/metadata"
 )
 

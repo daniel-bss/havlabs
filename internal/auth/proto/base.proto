@@ -4,7 +4,7 @@ package pb;
 
 import "google/protobuf/any.proto";
 
-option go_package = "github.com/daniel-bss/havlabs/auth/pb";
+option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
 
 message BaseResponse {
     google.protobuf.Any data = 1;

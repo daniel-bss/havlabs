@@ -220,7 +220,7 @@ const file_rpc_login_proto_rawDesc = "" +
 	"\x17access_token_expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x14accessTokenExpiresAt\x12S\n" +
 	"\x18refresh_token_expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x15refreshTokenExpiresAt\"2\n" +
 	"\rLoginResponse\x12!\n" +
-	"\x04data\x18\x01 \x01(\v2\r.pb.LoginDataR\x04dataB'Z%github.com/daniel-bss/havlabs/auth/pbb\x06proto3"
+	"\x04data\x18\x01 \x01(\v2\r.pb.LoginDataR\x04dataB'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var (
 	file_rpc_login_proto_rawDescOnce sync.Once

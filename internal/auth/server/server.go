@@ -3,10 +3,10 @@ package server
 import (
 	"fmt"
 
-	db "github.com/daniel-bss/havlabs/auth/db/sqlc"
-	"github.com/daniel-bss/havlabs/auth/pb"
-	"github.com/daniel-bss/havlabs/auth/token"
-	"github.com/daniel-bss/havlabs/auth/utils"
+	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
+	"github.com/daniel-bss/havlabs/internal/auth/pb"
+	"github.com/daniel-bss/havlabs/internal/auth/token"
+	"github.com/daniel-bss/havlabs/internal/auth/utils"
 )
 
 // Server serves gRPC requests for our banking service.

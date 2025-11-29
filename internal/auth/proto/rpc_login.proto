@@ -5,7 +5,7 @@ package pb;
 import "user.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/daniel-bss/havlabs/auth/pb";
+option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
 
 message LoginRequest {
     string username = 1;

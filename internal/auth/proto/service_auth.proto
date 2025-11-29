@@ -6,7 +6,7 @@ import "rpc_create_user.proto";
 import "rpc_update_user.proto";
 import "rpc_login.proto";
 
-option go_package = "github.com/daniel-bss/havlabs/auth/pb";
+option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
 
 service HavlabsAuth {
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}

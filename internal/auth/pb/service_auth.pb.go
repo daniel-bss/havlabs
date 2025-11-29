@@ -31,7 +31,7 @@ const file_service_auth_proto_rawDesc = "" +
 	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x00\x12=\n" +
 	"\n" +
 	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x00\x12.\n" +
-	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x00B'Z%github.com/daniel-bss/havlabs/auth/pbb\x06proto3"
+	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x00B'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var file_service_auth_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),  // 0: pb.CreateUserRequest
