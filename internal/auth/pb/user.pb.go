@@ -101,7 +101,7 @@ const file_user_proto_rawDesc = "" +
 	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12J\n" +
 	"\x13password_changed_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x11passwordChangedAt\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var (
 	file_user_proto_rawDescOnce sync.Once

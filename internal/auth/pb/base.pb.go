@@ -73,7 +73,7 @@ const file_base_proto_rawDesc = "" +
 	"\n" +
 	"base.proto\x12\x02pb\x1a\x19google/protobuf/any.proto\"8\n" +
 	"\fBaseResponse\x12(\n" +
-	"\x04data\x18\x01 \x01(\v2\x14.google.protobuf.AnyR\x04dataB'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"\x04data\x18\x01 \x01(\v2\x14.google.protobuf.AnyR\x04dataB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var (
 	file_base_proto_rawDescOnce sync.Once

@@ -139,7 +139,7 @@ const file_rpc_update_user_proto_rawDesc = "" +
 	"_full_nameB\v\n" +
 	"\t_password\"2\n" +
 	"\x12UpdateUserResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var (
 	file_rpc_update_user_proto_rawDescOnce sync.Once

@@ -24,14 +24,13 @@ var File_service_auth_proto protoreflect.FileDescriptor
 
 const file_service_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12service_auth.proto\x12\x02pb\x1a\n" +
-	"base.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xbb\x01\n" +
+	"\x12service_auth.proto\x12\x02pb\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xbb\x01\n" +
 	"\vHavlabsAuth\x12=\n" +
 	"\n" +
 	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x00\x12=\n" +
 	"\n" +
 	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x00\x12.\n" +
-	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x00B'Z%github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x00B0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var file_service_auth_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),  // 0: pb.CreateUserRequest
@@ -60,7 +59,6 @@ func file_service_auth_proto_init() {
 	if File_service_auth_proto != nil {
 		return
 	}
-	file_base_proto_init()
 	file_rpc_create_user_proto_init()
 	file_rpc_update_user_proto_init()
 	file_rpc_login_proto_init()
