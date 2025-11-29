@@ -9,11 +9,14 @@ import (
 	"os/signal"
 	"syscall"
 
+	db "github.com/daniel-bss/havlabs/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/auth/pb"
 	"github.com/daniel-bss/havlabs/auth/server"
 	"github.com/daniel-bss/havlabs/auth/utils"
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -32,13 +35,21 @@ func main() {
 		fmt.Println("cannot load config")
 	}
 
-	// TODO: setup DB
-
 	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
 	defer stop()
 
+	connPool, err := pgxpool.New(ctx, config.GetDBSource())
+	if err != nil {
+		// log.Fatal().Err(err).Msg("cannot connect to db")
+		fmt.Println("cannot connect to db")
+	}
+
+	runDBMigration(config.MigrationURL, config.GetDBSource())
+
+	store := db.NewStore(connPool)
+
 	waitGroup, ctx := errgroup.WithContext(ctx)
-	runGrpcServer(ctx, waitGroup, config, nil, nil)
+	runGrpcServer(ctx, waitGroup, config, store, nil)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -47,11 +58,27 @@ func main() {
 	}
 }
 
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+	if err != nil {
+		// log.Fatal().Err(err).Msg("cannot create new migrate instance")
+		fmt.Println("cannot create new migrate instance")
+	}
+
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		// log.Fatal().Err(err).Msg("failed to run migrate up")
+		fmt.Println("failed to run migrate up")
+	}
+
+	// log.Info().Msg("db migrated successfully")
+	fmt.Println("db migrated successfully")
+}
+
 func runGrpcServer(
 	ctx context.Context,
 	waitGroup *errgroup.Group,
 	config utils.Config,
-	store any,
+	store db.Store,
 	taskDistributor any,
 ) {
 	server, err := server.New(config, store, taskDistributor)

@@ -10,25 +10,27 @@ import (
 // Config stores all configuration of the application.
 // The values are read by viper from a config file or environment variable.
 type Config struct {
-	Environment          string        `mapstructure:"ENVIRONMENT"`
-	AllowedOrigins       []string      `mapstructure:"ALLOWED_ORIGINS"`
-	DBDriver             string        `mapstructure:"DB_DRIVER"`
-	DBUser               string        `mapstructure:"DB_USER"`
-	DBPassword           string        `mapstructure:"DB_PASSWORD"`
-	DBHost               string        `mapstructure:"DB_HOST"`
-	DBPort               string        `mapstructure:"DB_PORT"`
-	DBName               string        `mapstructure:"DB_NAME"`
-	DBSSLMode            string        `mapstructure:"DB_SSLMODE"`
-	MigrationURL         string        `mapstructure:"MIGRATION_URL"`
-	RedisAddress         string        `mapstructure:"REDIS_ADDRESS"`
-	HTTPServerAddress    string        `mapstructure:"HTTP_SERVER_ADDRESS"`
-	GRPCServerAddress    string        `mapstructure:"GRPC_SERVER_ADDRESS"`
+	DBUser     string `mapstructure:"DB_USER"`
+	DBPassword string `mapstructure:"DB_PASSWORD"`
+	DBName     string `mapstructure:"DB_NAME"`
+	DBDriver   string `mapstructure:"DB_DRIVER"`
+	DBHost     string `mapstructure:"DB_HOST"`
+	DBPort     string `mapstructure:"DB_PORT"`
+	DBSSLMode  string `mapstructure:"DB_SSLMODE"`
+
+	MinUsernameLength int `mapstructure:"MIN_USERNAME_LEN"`
+	MaxUsernameLength int `mapstructure:"MAX_USERNAME_LEN"`
+	MinPwdLength      int `mapstructure:"MIN_PASSWORD_LEN"`
+	MaxPwdLength      int `mapstructure:"MAX_PASSWORD_LEN"`
+
+	MigrationURL string `mapstructure:"MIGRATION_URL"`
+
 	TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
 	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
-	EmailSenderName      string        `mapstructure:"EMAIL_SENDER_NAME"`
-	EmailSenderAddress   string        `mapstructure:"EMAIL_SENDER_ADDRESS"`
-	EmailSenderPassword  string        `mapstructure:"EMAIL_SENDER_PASSWORD"`
+
+	AllowedOrigins    []string `mapstructure:"ALLOWED_ORIGINS"`
+	GRPCServerAddress string   `mapstructure:"GRPC_SERVER_ADDRESS"`
 }
 
 func (c *Config) GetDBSource() string {

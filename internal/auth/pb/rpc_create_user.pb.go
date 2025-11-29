@@ -25,7 +25,6 @@ type CreateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -71,13 +70,6 @@ func (x *CreateUserRequest) GetUsername() string {
 func (x *CreateUserRequest) GetFullName() string {
 	if x != nil {
 		return x.FullName
-	}
-	return ""
-}
-
-func (x *CreateUserRequest) GetEmail() string {
-	if x != nil {
-		return x.Email
 	}
 	return ""
 }
@@ -138,11 +130,10 @@ var File_rpc_create_user_proto protoreflect.FileDescriptor
 const file_rpc_create_user_proto_rawDesc = "" +
 	"\n" +
 	"\x15rpc_create_user.proto\x12\x02pb\x1a\n" +
-	"user.proto\"~\n" +
+	"user.proto\"h\n" +
 	"\x11CreateUserRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1b\n" +
-	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1a\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x1a\n" +
 	"\bpassword\x18\x04 \x01(\tR\bpassword\"2\n" +
 	"\x12CreateUserResponse\x12\x1c\n" +
 	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB'Z%github.com/daniel-bss/havlabs/auth/pbb\x06proto3"

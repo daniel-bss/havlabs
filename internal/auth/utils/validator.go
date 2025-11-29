@@ -14,12 +14,12 @@ var (
 func ValidateString(value string, minLength int, maxLength int) error {
 	n := len(value)
 	if n < minLength || n > maxLength {
-		return fmt.Errorf("must contain from %d-%d characters", minLength, maxLength)
+		return fmt.Errorf("invalid length. min %d, max %d", minLength, maxLength)
 	}
 	return nil
 }
 
-func ValidateUsername(value string) error {
+func ValidateUsername(value string, minLength int, maxLength int) error {
 	if err := ValidateString(value, 3, 100); err != nil {
 		return err
 	}
@@ -39,8 +39,8 @@ func ValidateFullName(value string) error {
 	return nil
 }
 
-func ValidatePassword(value string) error {
-	return ValidateString(value, 6, 100)
+func ValidatePassword(value string, minLength int, maxLength int) error {
+	return ValidateString(value, minLength, maxLength)
 }
 
 func ValidateEmail(value string) error {

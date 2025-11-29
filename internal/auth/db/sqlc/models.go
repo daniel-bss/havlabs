@@ -5,14 +5,71 @@
 package db
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 )
+
+type RoleTypes string
+
+const (
+	RoleTypesAdmin RoleTypes = "admin"
+	RoleTypesUser  RoleTypes = "user"
+)
+
+func (e *RoleTypes) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = RoleTypes(s)
+	case string:
+		*e = RoleTypes(s)
+	default:
+		return fmt.Errorf("unsupported scan type for RoleTypes: %T", src)
+	}
+	return nil
+}
+
+type NullRoleTypes struct {
+	RoleTypes RoleTypes `json:"role_types"`
+	Valid     bool      `json:"valid"` // Valid is true if RoleTypes is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullRoleTypes) Scan(value interface{}) error {
+	if value == nil {
+		ns.RoleTypes, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.RoleTypes.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullRoleTypes) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.RoleTypes), nil
+}
+
+type Session struct {
+	ID           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	RefreshToken string    `json:"refresh_token"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	CreatedAt    time.Time `json:"created_at"`
+}
 
 type User struct {
 	Username          string    `json:"username"`
 	HashedPassword    string    `json:"hashed_password"`
 	FullName          string    `json:"full_name"`
-	Email             string    `json:"email"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
+	Role              RoleTypes `json:"role"`
 }

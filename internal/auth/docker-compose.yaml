@@ -13,8 +13,8 @@ services:
       timeout: 10s
     ports:
       - "${DB_PORT}:5432"
-    # volumes:
-    #   - auth-volume:/var/lib/postgresql/data
+    volumes:
+      - auth-volume:/var/lib/postgresql/data
   # redis:
   #   image: redis:7-alpine
   # api:
@@ -31,6 +31,5 @@ services:
   #   entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
   #   command: [ "/app/main" ]
 
-# volumes:
-#   data-volume:
-#   auth-volume:
+volumes:
+  auth-volume:

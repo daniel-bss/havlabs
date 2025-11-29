@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package pb;
 
-import "base.proto";
 import "rpc_create_user.proto";
 import "rpc_update_user.proto";
 import "rpc_login.proto";
@@ -10,9 +9,9 @@ import "rpc_login.proto";
 option go_package = "github.com/daniel-bss/havlabs/auth/pb";
 
 service HavlabsAuth {
-    rpc CreateUser (CreateUserRequest) returns (BaseResponse) {}
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
 
-    rpc UpdateUser (UpdateUserRequest) returns (BaseResponse) {}
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {}
 
     rpc Login(LoginRequest) returns (LoginResponse) {}
 }

@@ -28,8 +28,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HavlabsAuthClient interface {
-	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*BaseResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*BaseResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
@@ -41,9 +41,9 @@ func NewHavlabsAuthClient(cc grpc.ClientConnInterface) HavlabsAuthClient {
 	return &havlabsAuthClient{cc}
 }
 
-func (c *havlabsAuthClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*BaseResponse, error) {
+func (c *havlabsAuthClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BaseResponse)
+	out := new(CreateUserResponse)
 	err := c.cc.Invoke(ctx, HavlabsAuth_CreateUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,9 +51,9 @@ func (c *havlabsAuthClient) CreateUser(ctx context.Context, in *CreateUserReques
 	return out, nil
 }
 
-func (c *havlabsAuthClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*BaseResponse, error) {
+func (c *havlabsAuthClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BaseResponse)
+	out := new(UpdateUserResponse)
 	err := c.cc.Invoke(ctx, HavlabsAuth_UpdateUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -75,8 +75,8 @@ func (c *havlabsAuthClient) Login(ctx context.Context, in *LoginRequest, opts ..
 // All implementations must embed UnimplementedHavlabsAuthServer
 // for forward compatibility.
 type HavlabsAuthServer interface {
-	CreateUser(context.Context, *CreateUserRequest) (*BaseResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*BaseResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	mustEmbedUnimplementedHavlabsAuthServer()
 }
@@ -88,10 +88,10 @@ type HavlabsAuthServer interface {
 // pointer dereference when methods are called.
 type UnimplementedHavlabsAuthServer struct{}
 
-func (UnimplementedHavlabsAuthServer) CreateUser(context.Context, *CreateUserRequest) (*BaseResponse, error) {
+func (UnimplementedHavlabsAuthServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedHavlabsAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*BaseResponse, error) {
+func (UnimplementedHavlabsAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
 func (UnimplementedHavlabsAuthServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {

@@ -2,95 +2,86 @@ package server
 
 import (
 	"context"
+	"errors"
+	"time"
 
+	db "github.com/daniel-bss/havlabs/auth/db/sqlc"
+	"github.com/daniel-bss/havlabs/auth/dtos"
 	"github.com/daniel-bss/havlabs/auth/pb"
 	"github.com/daniel-bss/havlabs/auth/utils"
+	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const (
-	DepositorRole = "depositor"
-	BankerRole    = "banker"
+	AdminRole = "admin"
+	UserRole  = "user"
 )
 
-func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.BaseResponse, error) {
-	authPayload, err := server.authorizeUser(ctx, []string{BankerRole, DepositorRole})
+func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	authPayload, err := server.authorizeUser(ctx, []string{AdminRole, UserRole})
 	if err != nil {
 		return nil, utils.UnauthenticatedError(err)
 	}
 
-	violations := validateUpdateUserRequest(req)
+	violations := validateUpdateUserRequest(req, server.config)
 	if violations != nil {
 		return nil, utils.InvalidArgumentError(violations)
 	}
 
-	if authPayload.Role != BankerRole && authPayload.Username != req.GetUsername() {
+	if authPayload.Role != AdminRole && authPayload.Username != req.GetUsername() {
 		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
 	}
 
-	// arg := db.UpdateUserParams{
-	// 	Username: req.GetUsername(),
-	// 	FullName: pgtype.Text{
-	// 		String: req.GetFullName(),
-	// 		Valid:  req.FullName != nil,
-	// 	},
-	// 	Email: pgtype.Text{
-	// 		String: req.GetEmail(),
-	// 		Valid:  req.Email != nil,
-	// 	},
-	// }
-
-	// if req.Password != nil {
-	// 	hashedPassword, err := util.HashPassword(req.GetPassword())
-	// 	if err != nil {
-	// 		return nil, status.Errorf(codes.Internal, "failed to hash password: %s", err)
-	// 	}
-
-	// 	arg.HashedPassword = pgtype.Text{
-	// 		String: hashedPassword,
-	// 		Valid:  true,
-	// 	}
-
-	// 	arg.PasswordChangedAt = pgtype.Timestamptz{
-	// 		Time:  time.Now(),
-	// 		Valid: true,
-	// 	}
-	// }
-
-	// user, err := server.store.UpdateUser(ctx, arg)
-	// if err != nil {
-	// 	if errors.Is(err, db.ErrRecordNotFound) {
-	// 		return nil, status.Errorf(codes.NotFound, "user not found")
-	// 	}
-	// 	return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
-	// }
-
-	updateUserRsp := &pb.UpdateUserResponse{
-		User: &pb.User{},
+	arg := db.UpdateUserParams{
+		Username: req.GetUsername(),
+		FullName: pgtype.Text{
+			String: req.GetFullName(),
+			Valid:  req.FullName != nil,
+		},
 	}
 
-	anyData, err := anypb.New(updateUserRsp)
+	if req.Password != nil {
+		hashedPassword, err := utils.HashPassword(req.GetPassword())
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to hash password: %s", err)
+		}
+
+		arg.HashedPassword = pgtype.Text{
+			String: hashedPassword,
+			Valid:  true,
+		}
+
+		arg.PasswordChangedAt = pgtype.Timestamptz{
+			Time:  time.Now(),
+			Valid: true,
+		}
+	}
+
+	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, db.ErrRecordNotFound) {
+			return nil, status.Errorf(codes.NotFound, "user not found")
+		}
+		return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
 	}
 
-	rsp := &pb.BaseResponse{
-		Data: anyData,
+	rsp := &pb.UpdateUserResponse{
+		User: dtos.ConvertUser(user),
 	}
 
 	return rsp, nil
 }
 
-func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
-	if err := utils.ValidateUsername(req.GetUsername()); err != nil {
+func validateUpdateUserRequest(req *pb.UpdateUserRequest, config utils.Config) (violations []*errdetails.BadRequest_FieldViolation) {
+	if err := utils.ValidateUsername(req.GetUsername(), config.MinUsernameLength, config.MaxUsernameLength); err != nil {
 		violations = append(violations, utils.FieldViolation("username", err))
 	}
 
 	if req.Password != nil {
-		if err := utils.ValidatePassword(req.GetPassword()); err != nil {
+		if err := utils.ValidatePassword(req.GetPassword(), config.MinPwdLength, config.MaxPwdLength); err != nil {
 			violations = append(violations, utils.FieldViolation("password", err))
 		}
 	}
@@ -101,11 +92,11 @@ func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdeta
 		}
 	}
 
-	if req.Email != nil {
-		if err := utils.ValidateEmail(req.GetEmail()); err != nil {
-			violations = append(violations, utils.FieldViolation("email", err))
-		}
-	}
+	// if req.Email != nil {
+	// 	if err := utils.ValidateEmail(req.GetEmail()); err != nil {
+	// 		violations = append(violations, utils.FieldViolation("email", err))
+	// 	}
+	// }
 
 	return violations
 }

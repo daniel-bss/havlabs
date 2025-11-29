@@ -25,28 +25,29 @@ var File_service_auth_proto protoreflect.FileDescriptor
 const file_service_auth_proto_rawDesc = "" +
 	"\n" +
 	"\x12service_auth.proto\x12\x02pb\x1a\n" +
-	"base.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xaf\x01\n" +
-	"\vHavlabsAuth\x127\n" +
+	"base.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xbb\x01\n" +
+	"\vHavlabsAuth\x12=\n" +
 	"\n" +
-	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x10.pb.BaseResponse\"\x00\x127\n" +
+	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x00\x12=\n" +
 	"\n" +
-	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x10.pb.BaseResponse\"\x00\x12.\n" +
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x00\x12.\n" +
 	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x00B'Z%github.com/daniel-bss/havlabs/auth/pbb\x06proto3"
 
 var file_service_auth_proto_goTypes = []any{
-	(*CreateUserRequest)(nil), // 0: pb.CreateUserRequest
-	(*UpdateUserRequest)(nil), // 1: pb.UpdateUserRequest
-	(*LoginRequest)(nil),      // 2: pb.LoginRequest
-	(*BaseResponse)(nil),      // 3: pb.BaseResponse
-	(*LoginResponse)(nil),     // 4: pb.LoginResponse
+	(*CreateUserRequest)(nil),  // 0: pb.CreateUserRequest
+	(*UpdateUserRequest)(nil),  // 1: pb.UpdateUserRequest
+	(*LoginRequest)(nil),       // 2: pb.LoginRequest
+	(*CreateUserResponse)(nil), // 3: pb.CreateUserResponse
+	(*UpdateUserResponse)(nil), // 4: pb.UpdateUserResponse
+	(*LoginResponse)(nil),      // 5: pb.LoginResponse
 }
 var file_service_auth_proto_depIdxs = []int32{
 	0, // 0: pb.HavlabsAuth.CreateUser:input_type -> pb.CreateUserRequest
 	1, // 1: pb.HavlabsAuth.UpdateUser:input_type -> pb.UpdateUserRequest
 	2, // 2: pb.HavlabsAuth.Login:input_type -> pb.LoginRequest
-	3, // 3: pb.HavlabsAuth.CreateUser:output_type -> pb.BaseResponse
-	3, // 4: pb.HavlabsAuth.UpdateUser:output_type -> pb.BaseResponse
-	4, // 5: pb.HavlabsAuth.Login:output_type -> pb.LoginResponse
+	3, // 3: pb.HavlabsAuth.CreateUser:output_type -> pb.CreateUserResponse
+	4, // 4: pb.HavlabsAuth.UpdateUser:output_type -> pb.UpdateUserResponse
+	5, // 5: pb.HavlabsAuth.Login:output_type -> pb.LoginResponse
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
