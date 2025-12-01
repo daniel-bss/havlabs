@@ -29,10 +29,15 @@ run:
 renew_env_example:
 	cp .env .env.example
 
-proto:
-	rm -f pb/*.go
-	protoc --proto_path=pb --go_out=pb --go_opt=paths=source_relative \
-	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-	pb/*.proto
+func-e:
+	func-e run -c ./envoy/config.yaml
 
-.PHONY: proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 
+proto:
+	rm -f pb/*
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+	--include_imports \
+	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	--descriptor_set_out=pb/hehe.pb \
+	proto/*.proto
+
+.PHONY: func-e proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 

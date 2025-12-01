@@ -17,10 +17,15 @@ func main() {
 	pb.RegisterServiceOneServer(s, &server.Server{})
 	reflection.Register(s)
 
-	lis, err := net.Listen("tcp", ":5000")
+	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		panic(err)
 	}
+	defer func(lis net.Listener) {
+		if err := lis.Close(); err != nil {
+			fmt.Printf("unexpected error: %v\n", err)
+		}
+	}(lis)
 
 	fmt.Println("okoko")
 	s.Serve(lis)

@@ -1,0 +1,86 @@
+static_resources:
+  listeners:
+    - address:
+        socket_address:
+          address: 0.0.0.0 # Listen on all available network interfaces
+          port_value: 8080 # Port number on which Envoy listens for incoming traffic
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager # HTTP connection manager filter
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: my_http # This is used to collect the statistics
+                codec_type: AUTO # Automatically choose the appropriate codec for HTTP connections
+                route_config:
+                  name: local_route # Identifier for the route configuration
+                  virtual_hosts:
+                    - name: local_service # Identifier for the virtual host
+                      domains: ["*"] # Match all domains
+                      routes:
+                        - match:
+                            prefix: /pb.HavlabsAuth
+                          route:
+                            cluster: grpc1
+                            timeout: 2s
+                        - match:
+                            prefix: /pb.ServiceOne
+                          route:
+                            cluster: grpc2
+                            timeout: 2s
+                http_filters:
+                  - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
+                      proto_descriptor: pb/all.pb
+                      services:
+                        - pb.ServiceOne
+                        - pb.HavlabsAuth
+                      print_options:
+                        add_whitespace: true
+                        always_print_primitive_fields: true
+                        always_print_enums_as_ints: false
+                        preserve_proto_field_names: true
+                  - name: envoy.filters.http.grpc_web
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+  clusters:
+    - name: grpc1 # Identifier for the cluster
+      connect_timeout: 0.25s # Timeout for connecting to the upstream service
+      type: STRICT_DNS # Cluster discovery type, resolves via DNS
+      lb_policy: ROUND_ROBIN # Load balancing policy, distributes requests evenly across endpoints
+      typed_extension_protocol_options:
+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+          explicit_http_config:
+            http2_protocol_options: {}
+      load_assignment:
+        cluster_name: grpc1 # Identifier for the cluster
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: 0.0.0.0 # Hostname or IP address of the endpoint, this is pointing to a docker service
+                      port_value: 50050 # Port number of the endpointStatic Resources
+    - name: grpc2 # Identifier for the cluster
+      connect_timeout: 0.25s # Timeout for connecting to the upstream service
+      type: STRICT_DNS # Cluster discovery type, resolves via DNS
+      lb_policy: ROUND_ROBIN # Load balancing policy, distributes requests evenly across endpoints
+      typed_extension_protocol_options:
+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+          explicit_http_config:
+            http2_protocol_options: {}
+      load_assignment:
+        cluster_name: grpc2 # Identifier for the cluster
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: 0.0.0.0 # Hostname or IP address of the endpoint, this is pointing to a docker service
+                      port_value: 50051 # Port number of the endpointStatic Resources

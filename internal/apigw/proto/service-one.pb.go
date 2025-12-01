@@ -116,14 +116,14 @@ var File_service_one_proto protoreflect.FileDescriptor
 
 const file_service_one_proto_rawDesc = "" +
 	"\n" +
-	"\x11service-one.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\"\"\n" +
+	"\x11service-one.proto\x12\x03svc\x1a\x1cgoogle/api/annotations.proto\"\"\n" +
 	"\fHelloRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"!\n" +
 	"\rHelloResponse\x12\x10\n" +
-	"\x03msg\x18\x01 \x01(\tR\x03msg2J\n" +
+	"\x03msg\x18\x01 \x01(\tR\x03msg2O\n" +
 	"\n" +
-	"ServiceOne\x12<\n" +
-	"\x05Hello\x12\x10.pb.HelloRequest\x1a\x11.pb.HelloResponse\"\x0e\x82\xd3\xe4\x93\x02\b\x12\x06/helloB1Z/github.com/daniel-bss/havlabs/internal/apigw/pbb\x06proto3"
+	"ServiceOne\x12A\n" +
+	"\x05Hello\x12\x11.svc.HelloRequest\x1a\x12.svc.HelloResponse\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/v1/helloB1Z/github.com/daniel-bss/havlabs/internal/apigw/pbb\x06proto3"
 
 var (
 	file_service_one_proto_rawDescOnce sync.Once
@@ -139,12 +139,12 @@ func file_service_one_proto_rawDescGZIP() []byte {
 
 var file_service_one_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_service_one_proto_goTypes = []any{
-	(*HelloRequest)(nil),  // 0: pb.HelloRequest
-	(*HelloResponse)(nil), // 1: pb.HelloResponse
+	(*HelloRequest)(nil),  // 0: svc.HelloRequest
+	(*HelloResponse)(nil), // 1: svc.HelloResponse
 }
 var file_service_one_proto_depIdxs = []int32{
-	0, // 0: pb.ServiceOne.Hello:input_type -> pb.HelloRequest
-	1, // 1: pb.ServiceOne.Hello:output_type -> pb.HelloResponse
+	0, // 0: svc.ServiceOne.Hello:input_type -> svc.HelloRequest
+	1, // 1: svc.ServiceOne.Hello:output_type -> svc.HelloResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
