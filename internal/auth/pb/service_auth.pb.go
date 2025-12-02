@@ -7,6 +7,7 @@
 package pb
 
 import (
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -24,29 +25,29 @@ var File_service_auth_proto protoreflect.FileDescriptor
 
 const file_service_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12service_auth.proto\x12\x02pb\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xbb\x01\n" +
-	"\vHavlabsAuth\x12=\n" +
+	"\x12service_auth.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xf8\x01\n" +
+	"\vHavlabsAuth\x12?\n" +
+	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x11\x82\xd3\xe4\x93\x02\v:\x01*\"\x06/login\x12Q\n" +
 	"\n" +
-	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x00\x12=\n" +
+	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/register\x12U\n" +
 	"\n" +
-	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x00\x12.\n" +
-	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x00B0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/users/updateB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var file_service_auth_proto_goTypes = []any{
-	(*CreateUserRequest)(nil),  // 0: pb.CreateUserRequest
-	(*UpdateUserRequest)(nil),  // 1: pb.UpdateUserRequest
-	(*LoginRequest)(nil),       // 2: pb.LoginRequest
-	(*CreateUserResponse)(nil), // 3: pb.CreateUserResponse
-	(*UpdateUserResponse)(nil), // 4: pb.UpdateUserResponse
-	(*LoginResponse)(nil),      // 5: pb.LoginResponse
+	(*LoginRequest)(nil),       // 0: pb.LoginRequest
+	(*CreateUserRequest)(nil),  // 1: pb.CreateUserRequest
+	(*UpdateUserRequest)(nil),  // 2: pb.UpdateUserRequest
+	(*LoginResponse)(nil),      // 3: pb.LoginResponse
+	(*CreateUserResponse)(nil), // 4: pb.CreateUserResponse
+	(*UpdateUserResponse)(nil), // 5: pb.UpdateUserResponse
 }
 var file_service_auth_proto_depIdxs = []int32{
-	0, // 0: pb.HavlabsAuth.CreateUser:input_type -> pb.CreateUserRequest
-	1, // 1: pb.HavlabsAuth.UpdateUser:input_type -> pb.UpdateUserRequest
-	2, // 2: pb.HavlabsAuth.Login:input_type -> pb.LoginRequest
-	3, // 3: pb.HavlabsAuth.CreateUser:output_type -> pb.CreateUserResponse
-	4, // 4: pb.HavlabsAuth.UpdateUser:output_type -> pb.UpdateUserResponse
-	5, // 5: pb.HavlabsAuth.Login:output_type -> pb.LoginResponse
+	0, // 0: pb.HavlabsAuth.Login:input_type -> pb.LoginRequest
+	1, // 1: pb.HavlabsAuth.CreateUser:input_type -> pb.CreateUserRequest
+	2, // 2: pb.HavlabsAuth.UpdateUser:input_type -> pb.UpdateUserRequest
+	3, // 3: pb.HavlabsAuth.Login:output_type -> pb.LoginResponse
+	4, // 4: pb.HavlabsAuth.CreateUser:output_type -> pb.CreateUserResponse
+	5, // 5: pb.HavlabsAuth.UpdateUser:output_type -> pb.UpdateUserResponse
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

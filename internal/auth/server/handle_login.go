@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/auth/dtos"
@@ -34,17 +35,18 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		return nil, status.Errorf(codes.NotFound, "incorrect password")
 	}
 
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
+	accessToken, accessTokenPayload, err := server.tokenMaker.CreateToken(
 		user.Username,
 		string(user.Role),
 		server.config.AccessTokenDuration,
 		token.TokenTypeAccessToken,
 	)
 	if err != nil {
+		fmt.Printf("failed to create access token: %s", err.Error())
 		return nil, status.Errorf(codes.Internal, "failed to create access token")
 	}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
+	refreshToken, refreshTokenPayload, err := server.tokenMaker.CreateToken(
 		user.Username,
 		string(user.Role),
 		server.config.RefreshTokenDuration,
@@ -56,13 +58,13 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 
 	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
-		ID:           refreshPayload.ID,
+		ID:           refreshTokenPayload.ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
-		ExpiresAt:    refreshPayload.ExpiredAt,
+		ExpiresAt:    refreshTokenPayload.ExpiredAt,
 	})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create session")
@@ -73,8 +75,8 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		SessionId:             session.ID.String(),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
+		AccessTokenExpiresAt:  timestamppb.New(accessTokenPayload.ExpiredAt),
+		RefreshTokenExpiresAt: timestamppb.New(refreshTokenPayload.ExpiredAt),
 	}
 
 	rsp := &pb.LoginResponse{

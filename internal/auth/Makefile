@@ -3,7 +3,7 @@ include .env
 DB_URL=$(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSLMODE)
 
 evans:
-	evans -r repl -p 9090
+	evans -r repl -p 50050 --verbose
 
 sqlc:
 	sqlc generate
@@ -32,7 +32,14 @@ renew_env_example:
 proto:
 	rm -f pb/*.go
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+	--include_imports \
 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	--descriptor_set_out=pb/auth.pb \
 	proto/*.proto
 
-.PHONY: proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 
+protopb:
+	protoc --proto_path=proto --include_imports --include_source_info \
+	--descriptor_set_out=pb/all.pb \
+	proto/*.proto
+
+.PHONY: proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 evans

@@ -1,4 +1,4 @@
 evans:
-	evans -r repl -p 5000
+	evans -r repl -p 50050
 
 .PHONY: evans

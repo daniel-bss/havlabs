@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -49,7 +51,8 @@ func main() {
 	store := db.NewStore(connPool)
 
 	waitGroup, ctx := errgroup.WithContext(ctx)
-	runGrpcServer(ctx, waitGroup, config, store, nil)
+	runGRPCServer(ctx, waitGroup, config, store, nil)
+	runJWKSServer(ctx, waitGroup, config)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -74,22 +77,22 @@ func runDBMigration(migrationURL string, dbSource string) {
 	fmt.Println("db migrated successfully")
 }
 
-func runGrpcServer(
+func runGRPCServer(
 	ctx context.Context,
 	waitGroup *errgroup.Group,
 	config utils.Config,
 	store db.Store,
 	taskDistributor any,
 ) {
-	server, err := server.New(config, store, taskDistributor)
+	s, err := server.NewGRPC(config, store, taskDistributor)
 	if err != nil {
 		// log.Fatal().Err(err).Msg("cannot create server")
 		fmt.Println("cannot create server")
 	}
 
-	// gprcLogger := grpc.UnaryInterceptor(gapi.GrpcLogger)
-	grpcServer := grpc.NewServer()
-	pb.RegisterHavlabsAuthServer(grpcServer, server)
+	gprcLogger := grpc.UnaryInterceptor(server.GrpcHehe)
+	grpcServer := grpc.NewServer(gprcLogger)
+	pb.RegisterHavlabsAuthServer(grpcServer, s)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
@@ -99,7 +102,6 @@ func runGrpcServer(
 	}
 
 	waitGroup.Go(func() error {
-		// log.Info().Msgf("start gRPC server at %s", listener.Addr().String())
 		fmt.Printf("start gRPC server at %s\n", listener.Addr().String())
 
 		err = grpcServer.Serve(listener)
@@ -118,9 +120,60 @@ func runGrpcServer(
 	waitGroup.Go(func() error {
 		<-ctx.Done()
 		fmt.Println("graceful shutdown gRPC server")
-
 		grpcServer.GracefulStop()
-		fmt.Println("graceful shutdown gRPC server")
+		return nil
+	})
+}
+
+func runJWKSServer(
+	ctx context.Context,
+	waitGroup *errgroup.Group,
+	config utils.Config,
+) {
+	listener := ":8080"
+	mux := http.NewServeMux()
+	var server *http.Server
+
+	waitGroup.Go(func() error {
+		fmt.Printf("start JWKS server at %s\n", listener)
+
+		mux.HandleFunc("/jwks.json", func(w http.ResponseWriter, r *http.Request) {
+			kid := "my-key-id-1"
+
+			jwk := map[string]any{
+				"kty": "RSA",
+				"kid": kid,
+				"alg": "RS256",
+				"use": "sig",
+				// "n":   base64.RawURLEncoding.EncodeToString(publicKey.N.Bytes()),
+				// "e":   base64.RawURLEncoding.EncodeToString(big.NewInt(int64(publicKey.E)).Bytes()),
+			}
+
+			json.NewEncoder(w).Encode(map[string]any{
+				// "data": []string{"iPhone", "MacBook", "iPad"},
+				"keys": []any{jwk},
+			})
+		})
+
+		server = &http.Server{
+			Addr:    listener,
+			Handler: mux,
+		}
+
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			fmt.Printf("Could not listen on %s: %v\n", listener, err)
+			return err
+		}
+
+		return nil
+	})
+
+	waitGroup.Go(func() error {
+		<-ctx.Done()
+		if err := server.Shutdown(ctx); err != nil {
+			fmt.Printf("Server shutdown failed: %v\n", err)
+		}
+		fmt.Println("graceful shutdown JWKS server")
 
 		return nil
 	})

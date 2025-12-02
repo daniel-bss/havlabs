@@ -13,7 +13,7 @@ import (
 type Server struct {
 	pb.UnimplementedHavlabsAuthServer
 	config     utils.Config
-	tokenMaker token.Maker
+	tokenMaker *token.JWTMaker
 	store      db.Store
 	// taskDistributor worker.TaskDistributor
 }
@@ -22,8 +22,8 @@ type Server struct {
 // TODO: github.com/theifedayo/go-dumb-password
 
 // NewServer creates a new gRPC server.
-func New(config utils.Config, store db.Store, taskDistributor any) (*Server, error) {
-	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
+func NewGRPC(config utils.Config, store db.Store, taskDistributor any) (*Server, error) {
+	tokenMaker, err := token.NewJWTMaker()
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
 	}

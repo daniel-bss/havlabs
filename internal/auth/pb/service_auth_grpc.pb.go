@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	HavlabsAuth_Login_FullMethodName      = "/pb.HavlabsAuth/Login"
 	HavlabsAuth_CreateUser_FullMethodName = "/pb.HavlabsAuth/CreateUser"
 	HavlabsAuth_UpdateUser_FullMethodName = "/pb.HavlabsAuth/UpdateUser"
-	HavlabsAuth_Login_FullMethodName      = "/pb.HavlabsAuth/Login"
 )
 
 // HavlabsAuthClient is the client API for HavlabsAuth service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HavlabsAuthClient interface {
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
 type havlabsAuthClient struct {
@@ -39,6 +39,16 @@ type havlabsAuthClient struct {
 
 func NewHavlabsAuthClient(cc grpc.ClientConnInterface) HavlabsAuthClient {
 	return &havlabsAuthClient{cc}
+}
+
+func (c *havlabsAuthClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginResponse)
+	err := c.cc.Invoke(ctx, HavlabsAuth_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *havlabsAuthClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
@@ -61,23 +71,13 @@ func (c *havlabsAuthClient) UpdateUser(ctx context.Context, in *UpdateUserReques
 	return out, nil
 }
 
-func (c *havlabsAuthClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, HavlabsAuth_Login_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // HavlabsAuthServer is the server API for HavlabsAuth service.
 // All implementations must embed UnimplementedHavlabsAuthServer
 // for forward compatibility.
 type HavlabsAuthServer interface {
+	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	mustEmbedUnimplementedHavlabsAuthServer()
 }
 
@@ -88,14 +88,14 @@ type HavlabsAuthServer interface {
 // pointer dereference when methods are called.
 type UnimplementedHavlabsAuthServer struct{}
 
+func (UnimplementedHavlabsAuthServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
 func (UnimplementedHavlabsAuthServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedHavlabsAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUser not implemented")
-}
-func (UnimplementedHavlabsAuthServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedHavlabsAuthServer) mustEmbedUnimplementedHavlabsAuthServer() {}
 func (UnimplementedHavlabsAuthServer) testEmbeddedByValue()                     {}
@@ -116,6 +116,24 @@ func RegisterHavlabsAuthServer(s grpc.ServiceRegistrar, srv HavlabsAuthServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&HavlabsAuth_ServiceDesc, srv)
+}
+
+func _HavlabsAuth_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HavlabsAuthServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HavlabsAuth_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HavlabsAuthServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _HavlabsAuth_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -154,24 +172,6 @@ func _HavlabsAuth_UpdateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HavlabsAuth_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HavlabsAuthServer).Login(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: HavlabsAuth_Login_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HavlabsAuthServer).Login(ctx, req.(*LoginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // HavlabsAuth_ServiceDesc is the grpc.ServiceDesc for HavlabsAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -180,16 +180,16 @@ var HavlabsAuth_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*HavlabsAuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Login",
+			Handler:    _HavlabsAuth_Login_Handler,
+		},
+		{
 			MethodName: "CreateUser",
 			Handler:    _HavlabsAuth_CreateUser_Handler,
 		},
 		{
 			MethodName: "UpdateUser",
 			Handler:    _HavlabsAuth_UpdateUser_Handler,
-		},
-		{
-			MethodName: "Login",
-			Handler:    _HavlabsAuth_Login_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
