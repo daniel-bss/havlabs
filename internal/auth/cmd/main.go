@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -52,7 +50,6 @@ func main() {
 
 	waitGroup, ctx := errgroup.WithContext(ctx)
 	runGRPCServer(ctx, waitGroup, config, store, nil)
-	// runJWKSServer(ctx, waitGroup, config)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -121,60 +118,6 @@ func runGRPCServer(
 		<-ctx.Done()
 		fmt.Println("graceful shutdown gRPC server")
 		grpcServer.GracefulStop()
-		return nil
-	})
-}
-
-func runJWKSServer(
-	ctx context.Context,
-	waitGroup *errgroup.Group,
-	config utils.Config,
-) {
-	listener := ":8080"
-	mux := http.NewServeMux()
-	var server *http.Server
-
-	waitGroup.Go(func() error {
-		fmt.Printf("start JWKS server at %s\n", listener)
-
-		mux.HandleFunc("/jwks.json", func(w http.ResponseWriter, r *http.Request) {
-			kid := "my-key-id-1"
-
-			jwk := map[string]any{
-				"kty": "RSA",
-				"kid": kid,
-				"alg": "RS256",
-				"use": "sig",
-				// "n":   base64.RawURLEncoding.EncodeToString(publicKey.N.Bytes()),
-				// "e":   base64.RawURLEncoding.EncodeToString(big.NewInt(int64(publicKey.E)).Bytes()),
-			}
-
-			json.NewEncoder(w).Encode(map[string]any{
-				// "data": []string{"iPhone", "MacBook", "iPad"},
-				"keys": []any{jwk},
-			})
-		})
-
-		server = &http.Server{
-			Addr:    listener,
-			Handler: mux,
-		}
-
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Printf("Could not listen on %s: %v\n", listener, err)
-			return err
-		}
-
-		return nil
-	})
-
-	waitGroup.Go(func() error {
-		<-ctx.Done()
-		if err := server.Shutdown(ctx); err != nil {
-			fmt.Printf("Server shutdown failed: %v\n", err)
-		}
-		fmt.Println("graceful shutdown JWKS server")
-
 		return nil
 	})
 }
