@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
@@ -21,6 +22,14 @@ const (
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	fmt.Println("kamskdmkads")
+
+	return &pb.UpdateUserResponse{
+		User: &pb.User{
+			Username: "ehe",
+		},
+	}, nil
+
 	authPayload, err := server.authorizeUser(ctx, []string{AdminRole, UserRole})
 	if err != nil {
 		return nil, utils.UnauthenticatedError(err)

@@ -28,13 +28,13 @@ service HavlabsAuth {
 
     rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
         option (google.api.http) = {
-            post: "/users/update"
+            post: "/hehe"
             body: "*"
         };
     }
     rpc GetJWKS(google.protobuf.Empty) returns (JWKSResponse) {
         option (google.api.http) = {
-            get: "/jwks.json"
+            get: "/.well-known/jwks.json"
         };
     }
 }

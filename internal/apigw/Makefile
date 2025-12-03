@@ -30,7 +30,10 @@ renew_env_example:
 	cp .env .env.example
 
 func-e:
-	func-e run -c ./envoy/config.yaml
+	func-e run -c ./envoy/envoy.yaml
+
+envoy:
+	envoy --log-level debug -c envoy/envoy.yaml
 
 proto:
 	rm -f pb/*
@@ -40,4 +43,4 @@ proto:
 	--descriptor_set_out=pb/hehe.pb \
 	proto/*.proto
 
-.PHONY: func-e proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 
+.PHONY: envoy func-e proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 

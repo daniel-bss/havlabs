@@ -1,0 +1,11 @@
+--2025-12-03 10:44:42--  https://apt.envoyproxy.io/signing.key
+Resolving apt.envoyproxy.io (apt.envoyproxy.io)... 13.215.239.219, 52.74.6.109, 2406:da18:b3d:e201::259, ...
+Connecting to apt.envoyproxy.io (apt.envoyproxy.io)|13.215.239.219|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 3158 (3.1K) [application/vnd.apple.keynote]
+Saving to: ‘STDOUT’
+
+-                               0%[                                                  ]       0  --.-KB/s               -                             100%[=================================================>]   3.08K  --.-KB/s    in 0s      
+
+2025-12-03 10:44:43 (47.6 MB/s) - written to stdout [3158/3158]
+

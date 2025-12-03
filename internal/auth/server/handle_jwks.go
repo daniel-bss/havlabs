@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"math/big"
 
 	"github.com/daniel-bss/havlabs/internal/auth/pb"
@@ -10,6 +11,7 @@ import (
 )
 
 func (s *Server) GetJWKS(ctx context.Context, req *emptypb.Empty) (res *pb.JWKSResponse, err error) {
+	fmt.Println("!@#!@#!@#!@#")
 	pubKey := s.tokenMaker.PublicKey()
 
 	jwk := &pb.JWK{

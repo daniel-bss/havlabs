@@ -27,15 +27,15 @@ var File_service_auth_proto protoreflect.FileDescriptor
 const file_service_auth_proto_rawDesc = "" +
 	"\n" +
 	"\x12service_auth.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto\x1a\n" +
-	"jwks.proto2\xc1\x02\n" +
+	"jwks.proto2\xc5\x02\n" +
 	"\vHavlabsAuth\x12?\n" +
 	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x11\x82\xd3\xe4\x93\x02\v:\x01*\"\x06/login\x12Q\n" +
 	"\n" +
-	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/register\x12U\n" +
+	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/register\x12M\n" +
 	"\n" +
-	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/users/update\x12G\n" +
-	"\aGetJWKS\x12\x16.google.protobuf.Empty\x1a\x10.pb.JWKSResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
-	"/jwks.jsonB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x10\x82\xd3\xe4\x93\x02\n" +
+	":\x01*\"\x05/hehe\x12S\n" +
+	"\aGetJWKS\x12\x16.google.protobuf.Empty\x1a\x10.pb.JWKSResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/.well-known/jwks.jsonB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var file_service_auth_proto_goTypes = []any{
 	(*LoginRequest)(nil),       // 0: pb.LoginRequest

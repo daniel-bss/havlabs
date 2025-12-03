@@ -26,11 +26,11 @@ const (
 type Payload struct {
 	jwt.RegisteredClaims
 
-	ID uuid.UUID `json:"jti"`
-	// KeyID     string    `json:"kid"`
+	ID        uuid.UUID `json:"jti"`
+	KeyID     string    `json:"kid"`
 	Issuer    string    `json:"iss"`
-	IssuedAt  time.Time `json:"iat"`
-	ExpiredAt time.Time `json:"exp"`
+	IssuedAt  int       `json:"iat"`
+	ExpiredAt int       `json:"exp"`
 	Type      TokenType `json:"token_type"`
 	Username  string    `json:"username"`
 	Role      string    `json:"role"`
@@ -45,12 +45,13 @@ func NewPayload(username string, role string, duration time.Duration, tokenType 
 
 	payload := &Payload{
 		ID:        tokenID,
+		KeyID:     "oneandonly-jwk-until-further-implementation",
 		Type:      tokenType,
 		Username:  username,
 		Role:      role,
 		Issuer:    ISSUER,
-		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().Add(duration),
+		IssuedAt:  int(time.Now().Unix()),
+		ExpiredAt: int(time.Now().Add(duration).Unix()),
 	}
 	return payload, nil
 }
@@ -60,7 +61,9 @@ func (payload *Payload) Valid(tokenType TokenType) error {
 	if payload.Type != tokenType {
 		return ErrInvalidToken
 	}
-	if time.Now().After(payload.ExpiredAt) {
+
+	expiredAt := time.Unix(payload.ExpiresAt.Unix(), 0)
+	if time.Now().After(expiredAt) {
 		return ErrExpiredToken
 	}
 	return nil
@@ -68,19 +71,19 @@ func (payload *Payload) Valid(tokenType TokenType) error {
 
 func (payload *Payload) GetExpirationTime() (*jwt.NumericDate, error) {
 	return &jwt.NumericDate{
-		Time: payload.ExpiredAt,
+		Time: time.Unix(int64(payload.ExpiredAt), 0),
 	}, nil
 }
 
 func (payload *Payload) GetIssuedAt() (*jwt.NumericDate, error) {
 	return &jwt.NumericDate{
-		Time: payload.IssuedAt,
+		Time: time.Unix(int64(payload.IssuedAt), 0),
 	}, nil
 }
 
 func (payload *Payload) GetNotBefore() (*jwt.NumericDate, error) {
 	return &jwt.NumericDate{
-		Time: payload.IssuedAt,
+		Time: time.Unix(int64(payload.IssuedAt), 0),
 	}, nil
 }
 

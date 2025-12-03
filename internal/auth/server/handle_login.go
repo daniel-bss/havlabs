@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/auth/dtos"
@@ -64,7 +65,7 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
-		ExpiresAt:    refreshTokenPayload.ExpiredAt,
+		ExpiresAt:    time.Unix(int64(refreshTokenPayload.ExpiredAt), 0),
 	})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create session")
@@ -75,8 +76,8 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		SessionId:             session.ID.String(),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessTokenPayload.ExpiredAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshTokenPayload.ExpiredAt),
+		AccessTokenExpiresAt:  timestamppb.New(time.Unix(int64(accessTokenPayload.ExpiredAt), 0)),
+		RefreshTokenExpiresAt: timestamppb.New(time.Unix(int64(refreshTokenPayload.ExpiredAt), 0)),
 	}
 
 	rsp := &pb.LoginResponse{
