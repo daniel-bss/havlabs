@@ -2,12 +2,8 @@ package server
 
 import (
 	"context"
-	"fmt"
-	"reflect"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func GrpcHehe(
@@ -25,15 +21,15 @@ func GrpcHehe(
 	// 	statusCode = st.Code()
 	// }
 
-	fmt.Println("OKCAKKK")
-	fmt.Println(result)
-	fmt.Println(reflect.TypeOf(result))
+	// fmt.Println("OKCAKKK")
+	// fmt.Println(result)
+	// fmt.Println(reflect.TypeOf(result))
 
-	statusCode := codes.Unknown
-	if st, ok := status.FromError(err); ok {
-		statusCode = st.Code()
-	}
-	fmt.Print(statusCode)
+	// statusCode := codes.Unknown
+	// if st, ok := status.FromError(err); ok {
+	// 	statusCode = st.Code()
+	// }
+	// fmt.Print(statusCode)
 
 	return result, err
 }

@@ -9,7 +9,7 @@ option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
 message CreateUserRequest {
     string username = 1;
     string full_name = 2;
-    string password = 4;
+    string password = 3;
 }
 
 message CreateUserResponse {

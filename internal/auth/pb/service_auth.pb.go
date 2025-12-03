@@ -10,6 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -25,31 +26,38 @@ var File_service_auth_proto protoreflect.FileDescriptor
 
 const file_service_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12service_auth.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto2\xf8\x01\n" +
+	"\x12service_auth.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x0frpc_login.proto\x1a\n" +
+	"jwks.proto2\xc1\x02\n" +
 	"\vHavlabsAuth\x12?\n" +
 	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x11\x82\xd3\xe4\x93\x02\v:\x01*\"\x06/login\x12Q\n" +
 	"\n" +
 	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/register\x12U\n" +
 	"\n" +
-	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/users/updateB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/users/update\x12G\n" +
+	"\aGetJWKS\x12\x16.google.protobuf.Empty\x1a\x10.pb.JWKSResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
+	"/jwks.jsonB0Z.github.com/daniel-bss/havlabs/internal/auth/pbb\x06proto3"
 
 var file_service_auth_proto_goTypes = []any{
 	(*LoginRequest)(nil),       // 0: pb.LoginRequest
 	(*CreateUserRequest)(nil),  // 1: pb.CreateUserRequest
 	(*UpdateUserRequest)(nil),  // 2: pb.UpdateUserRequest
-	(*LoginResponse)(nil),      // 3: pb.LoginResponse
-	(*CreateUserResponse)(nil), // 4: pb.CreateUserResponse
-	(*UpdateUserResponse)(nil), // 5: pb.UpdateUserResponse
+	(*emptypb.Empty)(nil),      // 3: google.protobuf.Empty
+	(*LoginResponse)(nil),      // 4: pb.LoginResponse
+	(*CreateUserResponse)(nil), // 5: pb.CreateUserResponse
+	(*UpdateUserResponse)(nil), // 6: pb.UpdateUserResponse
+	(*JWKSResponse)(nil),       // 7: pb.JWKSResponse
 }
 var file_service_auth_proto_depIdxs = []int32{
 	0, // 0: pb.HavlabsAuth.Login:input_type -> pb.LoginRequest
 	1, // 1: pb.HavlabsAuth.CreateUser:input_type -> pb.CreateUserRequest
 	2, // 2: pb.HavlabsAuth.UpdateUser:input_type -> pb.UpdateUserRequest
-	3, // 3: pb.HavlabsAuth.Login:output_type -> pb.LoginResponse
-	4, // 4: pb.HavlabsAuth.CreateUser:output_type -> pb.CreateUserResponse
-	5, // 5: pb.HavlabsAuth.UpdateUser:output_type -> pb.UpdateUserResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 3: pb.HavlabsAuth.GetJWKS:input_type -> google.protobuf.Empty
+	4, // 4: pb.HavlabsAuth.Login:output_type -> pb.LoginResponse
+	5, // 5: pb.HavlabsAuth.CreateUser:output_type -> pb.CreateUserResponse
+	6, // 6: pb.HavlabsAuth.UpdateUser:output_type -> pb.UpdateUserResponse
+	7, // 7: pb.HavlabsAuth.GetJWKS:output_type -> pb.JWKSResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -63,6 +71,7 @@ func file_service_auth_proto_init() {
 	file_rpc_create_user_proto_init()
 	file_rpc_update_user_proto_init()
 	file_rpc_login_proto_init()
+	file_jwks_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

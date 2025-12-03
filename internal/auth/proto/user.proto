@@ -9,6 +9,6 @@ option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
 message User {
     string username = 1;
     string full_name = 2;
-    google.protobuf.Timestamp password_changed_at = 4;
-    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp password_changed_at = 3;
+    google.protobuf.Timestamp created_at = 4;
 }

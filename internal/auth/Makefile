@@ -34,12 +34,11 @@ proto:
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
 	--include_imports \
 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-	--descriptor_set_out=pb/auth.pb \
-	proto/*.proto
-
-protopb:
-	protoc --proto_path=proto --include_imports --include_source_info \
 	--descriptor_set_out=pb/all.pb \
 	proto/*.proto
+
+copypb:
+	cp pb/all.pb ../apigw/pb/all.pb 
+
 
 .PHONY: proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 evans

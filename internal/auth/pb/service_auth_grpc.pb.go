@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,6 +23,7 @@ const (
 	HavlabsAuth_Login_FullMethodName      = "/pb.HavlabsAuth/Login"
 	HavlabsAuth_CreateUser_FullMethodName = "/pb.HavlabsAuth/CreateUser"
 	HavlabsAuth_UpdateUser_FullMethodName = "/pb.HavlabsAuth/UpdateUser"
+	HavlabsAuth_GetJWKS_FullMethodName    = "/pb.HavlabsAuth/GetJWKS"
 )
 
 // HavlabsAuthClient is the client API for HavlabsAuth service.
@@ -31,6 +33,7 @@ type HavlabsAuthClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	GetJWKS(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*JWKSResponse, error)
 }
 
 type havlabsAuthClient struct {
@@ -71,6 +74,16 @@ func (c *havlabsAuthClient) UpdateUser(ctx context.Context, in *UpdateUserReques
 	return out, nil
 }
 
+func (c *havlabsAuthClient) GetJWKS(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*JWKSResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(JWKSResponse)
+	err := c.cc.Invoke(ctx, HavlabsAuth_GetJWKS_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HavlabsAuthServer is the server API for HavlabsAuth service.
 // All implementations must embed UnimplementedHavlabsAuthServer
 // for forward compatibility.
@@ -78,6 +91,7 @@ type HavlabsAuthServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	GetJWKS(context.Context, *emptypb.Empty) (*JWKSResponse, error)
 	mustEmbedUnimplementedHavlabsAuthServer()
 }
 
@@ -96,6 +110,9 @@ func (UnimplementedHavlabsAuthServer) CreateUser(context.Context, *CreateUserReq
 }
 func (UnimplementedHavlabsAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedHavlabsAuthServer) GetJWKS(context.Context, *emptypb.Empty) (*JWKSResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetJWKS not implemented")
 }
 func (UnimplementedHavlabsAuthServer) mustEmbedUnimplementedHavlabsAuthServer() {}
 func (UnimplementedHavlabsAuthServer) testEmbeddedByValue()                     {}
@@ -172,6 +189,24 @@ func _HavlabsAuth_UpdateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HavlabsAuth_GetJWKS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HavlabsAuthServer).GetJWKS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HavlabsAuth_GetJWKS_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HavlabsAuthServer).GetJWKS(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HavlabsAuth_ServiceDesc is the grpc.ServiceDesc for HavlabsAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +225,10 @@ var HavlabsAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUser",
 			Handler:    _HavlabsAuth_UpdateUser_Handler,
+		},
+		{
+			MethodName: "GetJWKS",
+			Handler:    _HavlabsAuth_GetJWKS_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

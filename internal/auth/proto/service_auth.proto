@@ -3,9 +3,11 @@ syntax = "proto3";
 package pb;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 import "rpc_create_user.proto";
 import "rpc_update_user.proto";
 import "rpc_login.proto";
+import "jwks.proto";
 
 option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
 
@@ -28,6 +30,11 @@ service HavlabsAuth {
         option (google.api.http) = {
             post: "/users/update"
             body: "*"
+        };
+    }
+    rpc GetJWKS(google.protobuf.Empty) returns (JWKSResponse) {
+        option (google.api.http) = {
+            get: "/jwks.json"
         };
     }
 }

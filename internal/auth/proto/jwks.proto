@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/daniel-bss/havlabs/internal/auth/pb";
+
+message JWK {
+    string kty = 1;
+    string alg = 2;
+    string use = 3;
+    string kid = 4;
+    string n = 5;
+    string e = 6;
+}
+
+message JWKSResponse {
+    repeated JWK keys = 1;
+}

@@ -52,7 +52,7 @@ func main() {
 
 	waitGroup, ctx := errgroup.WithContext(ctx)
 	runGRPCServer(ctx, waitGroup, config, store, nil)
-	runJWKSServer(ctx, waitGroup, config)
+	// runJWKSServer(ctx, waitGroup, config)
 
 	err = waitGroup.Wait()
 	if err != nil {
