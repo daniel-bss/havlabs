@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"math/big"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,6 +16,7 @@ import (
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/auth/pb"
 	"github.com/daniel-bss/havlabs/internal/auth/server"
+	"github.com/daniel-bss/havlabs/internal/auth/token"
 	"github.com/daniel-bss/havlabs/internal/auth/utils"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -120,4 +125,31 @@ func runGRPCServer(
 		grpcServer.GracefulStop()
 		return nil
 	})
+}
+
+func runHTTPServer(ctx context.Context, waitGroup *errgroup.Group, config utils.Config) {
+	tokenMaker, _ := token.NewJWTMaker()
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/.well-known/jwks.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		pubKey := tokenMaker.PublicKey()
+
+		err := json.NewEncoder(w).Encode(map[string]interface{}{
+			"kid": "oneandonly-jwk-until-further-implementation", // OPTIONAL UNTIL MULTIPLE JWKs
+			"kty": "RSA",
+			"alg": "RS384",
+			"use": "sig",
+			"n":   base64.RawURLEncoding.EncodeToString(pubKey.N.Bytes()),
+			"e":   base64.RawURLEncoding.EncodeToString(big.NewInt(int64(pubKey.E)).Bytes()),
+		})
+		if err != nil {
+			fmt.Println("failed to encode JWKS")
+		}
+	})
+	port := ":8081"
+	fmt.Printf("Server starting on port %s\n", port)
+	fmt.Println(http.ListenAndServe(port, mux))
 }
