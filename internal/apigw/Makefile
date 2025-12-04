@@ -33,7 +33,7 @@ func-e:
 	func-e run -c ./envoy/envoy.yaml
 
 envoy:
-	envoy --log-level debug -c envoy/envoy.yaml
+	envoy --log-level warning -c envoy/envoy.yaml
 
 proto:
 	rm -f pb/*
