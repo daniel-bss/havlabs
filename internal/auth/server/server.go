@@ -3,8 +3,8 @@ package server
 import (
 	"fmt"
 
+	"github.com/daniel-bss/havlabs-proto/pb"
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
-	"github.com/daniel-bss/havlabs/internal/auth/pb"
 	"github.com/daniel-bss/havlabs/internal/auth/token"
 	"github.com/daniel-bss/havlabs/internal/auth/utils"
 )

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/daniel-bss/havlabs-proto/pb"
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/auth/dtos"
-	"github.com/daniel-bss/havlabs/internal/auth/pb"
 	"github.com/daniel-bss/havlabs/internal/auth/utils"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/daniel-bss/havlabs/internal/auth/pb"
+	"github.com/daniel-bss/havlabs-proto/pb"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

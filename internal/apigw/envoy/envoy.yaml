@@ -31,7 +31,7 @@ static_resources:
                 - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
-                    proto_descriptor: pb/all.pb
+                    proto_descriptor: pb/pb.pb
                     services:
                       - pb.ServiceOne
                       - pb.HavlabsAuth
