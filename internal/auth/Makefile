@@ -37,8 +37,7 @@ proto:
 	--descriptor_set_out=pb/all.pb \
 	proto/*.proto
 
-copypb:
-	cp pb/all.pb ../apigw/pb/all.pb 
-
+gogetproto:
+	go get github.com/daniel-bss/havlabs-proto@8a4bc40
 
 .PHONY: proto run sqlc new_migration migrateup migrateup1 migratedown migratedown1 evans

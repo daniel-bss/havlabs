@@ -13,6 +13,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"buf.build/go/protovalidate"
+	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
+
 	"github.com/daniel-bss/havlabs-proto/pb"
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/auth/server"
@@ -55,6 +58,7 @@ func main() {
 
 	waitGroup, ctx := errgroup.WithContext(ctx)
 	runGRPCServer(ctx, waitGroup, config, store, nil)
+	go runHTTPServer(config)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -86,14 +90,23 @@ func runGRPCServer(
 	store db.Store,
 	taskDistributor any,
 ) {
+	validator, err := protovalidate.New()
+	if err != nil {
+		fmt.Println("failed to create protovalidate validator")
+		return
+	}
+
 	s, err := server.NewGRPC(config, store, taskDistributor)
 	if err != nil {
 		// log.Fatal().Err(err).Msg("cannot create server")
 		fmt.Println("cannot create server")
 	}
 
-	gprcLogger := grpc.UnaryInterceptor(server.GrpcHehe)
-	grpcServer := grpc.NewServer(gprcLogger)
+	// TODO: cari tahu mana yg lebih duluan di-execute
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(protovalidate_middleware.UnaryServerInterceptor(validator, server.Interceptor)),
+	)
+
 	pb.RegisterHavlabsAuthServer(grpcServer, s)
 	reflection.Register(grpcServer)
 
@@ -127,7 +140,7 @@ func runGRPCServer(
 	})
 }
 
-func runHTTPServer(ctx context.Context, waitGroup *errgroup.Group, config utils.Config) {
+func runHTTPServer(config utils.Config) {
 	tokenMaker, _ := token.NewJWTMaker()
 
 	mux := http.NewServeMux()

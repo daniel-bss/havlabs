@@ -22,18 +22,18 @@ static_resources:
                         route:
                           cluster: grpc1
                           timeout: 2s
-                      - match:
-                          prefix: /pb.ServiceOne
-                        route:
-                          cluster: grpc2
-                          timeout: 2s
+                      # - match:
+                      #     prefix: /pb.ServiceOne
+                      #   route:
+                      #     cluster: grpc2
+                      #     timeout: 2s
               http_filters:
                 - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
                     proto_descriptor: pb/pb.pb
                     services:
-                      - pb.ServiceOne
+                      # - pb.ServiceOne
                       - pb.HavlabsAuth
                     print_options:
                       add_whitespace: true
@@ -64,6 +64,7 @@ static_resources:
                           - name: Authorization
                             value_prefix: "Bearer "
                         forward: true
+
                     rules:
                       - match:
                           prefix: /pb.HavlabsAuth/UpdateUser # /<package>.<service-name>/<method-name>

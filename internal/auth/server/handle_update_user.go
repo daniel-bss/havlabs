@@ -22,14 +22,6 @@ const (
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
-	fmt.Println("kamskdmkads")
-
-	return &pb.UpdateUserResponse{
-		User: &pb.User{
-			Username: "ehe",
-		},
-	}, nil
-
 	authPayload, err := server.authorizeUser(ctx, []string{AdminRole, UserRole})
 	if err != nil {
 		return nil, utils.UnauthenticatedError(err)
@@ -69,11 +61,14 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		}
 	}
 
+	fmt.Println(">>>", arg.FullName)
+
 	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			return nil, status.Errorf(codes.NotFound, "user not found")
 		}
+
 		return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
 	}
 

@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/daniel-bss/havlabs-proto/pb"
@@ -43,8 +42,7 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		token.TokenTypeAccessToken,
 	)
 	if err != nil {
-		fmt.Printf("failed to create access token: %s", err.Error())
-		return nil, status.Errorf(codes.Internal, "failed to create access token")
+		return nil, utils.FailedCreateAccessToken()
 	}
 
 	refreshToken, refreshTokenPayload, err := server.tokenMaker.CreateToken(

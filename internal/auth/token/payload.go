@@ -10,7 +10,7 @@ import (
 
 // Different types of error returned by the VerifyToken function
 var (
-	ErrInvalidToken = errors.New("token is invalid hehe")
+	ErrInvalidToken = errors.New("token is invalid")
 	ErrExpiredToken = errors.New("token has expired")
 )
 
@@ -62,7 +62,7 @@ func (payload *Payload) Valid(tokenType TokenType) error {
 		return ErrInvalidToken
 	}
 
-	expiredAt := time.Unix(payload.ExpiresAt.Unix(), 0)
+	expiredAt := time.Unix(int64(payload.ExpiredAt), 0)
 	if time.Now().After(expiredAt) {
 		return ErrExpiredToken
 	}

@@ -3,10 +3,13 @@ package utils
 import (
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+var ErrRecordNotFound = pgx.ErrNoRows
 
 func FieldViolation(field string, err error) *errdetails.BadRequest_FieldViolation {
 	return &errdetails.BadRequest_FieldViolation{
@@ -32,4 +35,12 @@ func InvalidArgumentError(violations []*errdetails.BadRequest_FieldViolation) er
 
 func UnauthenticatedError(err error) error {
 	return status.Errorf(codes.Unauthenticated, "unauthorized: %s", err)
+}
+
+func InternalServerError() error {
+	return status.Errorf(codes.Internal, "UNEXPECTED_ERROR")
+}
+
+func FailedCreateAccessToken() error {
+	return status.Errorf(codes.Internal, "failed to create access token")
 }

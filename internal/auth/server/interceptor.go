@@ -2,18 +2,19 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	"google.golang.org/grpc"
 )
 
-func GrpcHehe(
+func Interceptor(
 	ctx context.Context,
 	req interface{},
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (resp any, err error) {
 	// startTime := time.Now()
-	result, err := handler(ctx, req)
+	// _, err := handler(ctx, req)
 	// duration := time.Since(startTime)
 
 	// statusCode := codes.Unknown
@@ -31,5 +32,10 @@ func GrpcHehe(
 	// }
 	// fmt.Print(statusCode)
 
-	return result, err
+	fmt.Println("TODO: interceptor")
+
+	// return nil, status.Errorf(codes.Internal, "wah unsupported message type: ")
+
+	return handler(ctx, req)
+
 }
