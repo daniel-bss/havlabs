@@ -14,6 +14,7 @@ import (
 	"syscall"
 
 	"buf.build/go/protovalidate"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 
 	"github.com/daniel-bss/havlabs-proto/pb"
@@ -58,7 +59,6 @@ func main() {
 
 	waitGroup, ctx := errgroup.WithContext(ctx)
 	runGRPCServer(ctx, waitGroup, config, store, nil)
-	go runHTTPServer(config)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -95,19 +95,27 @@ func runGRPCServer(
 		fmt.Println("failed to create protovalidate validator")
 		return
 	}
-
-	s, err := server.NewGRPC(config, store, taskDistributor)
-	if err != nil {
-		// log.Fatal().Err(err).Msg("cannot create server")
-		fmt.Println("cannot create server")
+	recoveryOpts := []grpc_recovery.Option{
+		grpc_recovery.WithRecoveryHandler(func(interface{}) error {
+			return utils.InternalServerError()
+		}),
 	}
 
-	// TODO: cari tahu mana yg lebih duluan di-execute
-	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(protovalidate_middleware.UnaryServerInterceptor(validator, server.Interceptor)),
-	)
+	service, err := server.NewGRPC(config, store, taskDistributor)
+	if err != nil {
+		// log.Fatal().Err(err).Msg("cannot create server")
+		fmt.Println("cannot create gRPC service")
+	}
 
-	pb.RegisterHavlabsAuthServer(grpcServer, s)
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			grpc_recovery.UnaryServerInterceptor(recoveryOpts...),
+			server.CustomInterceptor(),
+			protovalidate_middleware.UnaryServerInterceptor(validator),
+		),
+	) // runs in order
+
+	pb.RegisterHavlabsAuthServer(grpcServer, service)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
