@@ -21,22 +21,64 @@ static_resources:
                         route:
                           cluster: grpc1
                           timeout: 2s
+                      - match:
+                          prefix: "/pb.HavlabsAuth/Login"
+                        route:
+                          # host_rewrite_literal: upstream.com
+                          cluster: grpc1
+                        typed_per_filter_config:
+                          envoy.filters.http.lua:
+                            "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                            name: hello.lua
                       - match: { prefix: "/pb.HavlabsAuth" }
                         route:
                           cluster: grpc1
                           timeout: 2s
+
                     cors:
                       allow_origin_string_match:
                         - prefix: "http://localhost:3000"
                       allow_methods: "GET, POST, PUT, DELETE, OPTIONS"
-                      allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
-                      max_age: "1728000"
+                      allow_headers: TODO yg bawah ini override hati2 keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
+                      allow_headers: "authorization, keep-alive, user-agent, cache-control, content-type, content-transfer-encoding, x-accept-content-transfer-encoding, x-accept-response-streaming, x-user-agent, x-grpc-web, referer" 
                       expose_headers: custom-header-1,grpc-status,grpc-message
-                      allow_headers: "authorization, keep-alive, user-agent, cache-control, content-type, content-transfer-encoding, x-accept-content-transfer-encoding, x-accept-response-streaming, x-user-agent, x-grpc-web, referer"
                       expose_headers: "grpc-status, grpc-message, x-envoy-upstream-service-time"
+                      max_age: "1728000"
                       allow_credentials: true
               
               http_filters:
+                - name: envoy.filters.http.lua
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                    default_source_code:
+                      inline_string: |
+                        -- Called on the request path.
+                        function envoy_on_request(request_handle)
+                          -- print("HELLO WORLD on req")
+                        end
+
+                        -- Called on the response path.
+                        function envoy_on_response(response_handle)
+                          -- print("HELLO WORLD on res")
+                        end
+                    source_codes:
+                      hello.lua:
+                        inline_string: |
+                          function envoy_on_request(request_handle)
+                          end
+
+                          function envoy_on_response(response_handle)
+                            local body = response_handle:body()
+                            local body_str = body:getBytes(0, body:length()) 
+                            local access_token = body_str:match('"access_token": ?"([^\"]+)')
+                            local refresh_token = body_str:match('"refresh_token": ?"([^\"]+)')
+
+                            print(body_str)
+
+                            print(access_token)
+                            print()
+                            print(refresh_token)
+                          end
                 - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
@@ -57,7 +99,7 @@ static_resources:
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
 
-                - name: envoy.extensions.filters.http.cors.v3.Cors # This must be present
+                - name: envoy.extensions.filters.http.cors.v3.Cors 
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
 

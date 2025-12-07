@@ -135,3 +135,138 @@ static_resources:
                   socket_address:
                     address: 127.0.0.1
                     port_value: 8081
+
+
+########### cors
+
+static_resources:
+  listeners:
+    - address:
+        socket_address:
+          address: 0.0.0.0 # Listen on all available network interfaces
+          port_value: 8080 # Port number on which Envoy listens for incoming traffic
+      filter_chains:
+        - filters:
+          - name: envoy.filters.network.http_connection_manager # HTTP connection manager filter
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+              stat_prefix: my_http # This is used to collect the statistics
+              codec_type: AUTO # Automatically choose the appropriate codec for HTTP connections
+              route_config:
+                name: local_route # Identifier for the route configuration
+                virtual_hosts:
+                  - name: local_service # Identifier for the virtual host
+                    domains: ["*"] # Match all domains
+                    routes:
+                      - match: { prefix: "/", headers: [ { name: ":method", exact_match: "OPTIONS" } ] }
+                        route:
+                          cluster: grpc1
+                          timeout: 2s
+                      - match: { prefix: "/pb.HavlabsAuth" }
+                        route:
+                          cluster: grpc1
+                          timeout: 2s
+                    cors:
+                      allow_origin_string_match:
+                        - prefix: "http://localhost:3000"
+                      allow_methods: "GET, POST, PUT, DELETE, OPTIONS"
+                      allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
+                      allow_headers: "authorization, keep-alive, user-agent, cache-control, content-type, content-transfer-encoding, x-accept-content-transfer-encoding, x-accept-response-streaming, x-user-agent, x-grpc-web, referer"
+                      expose_headers: custom-header-1,grpc-status,grpc-message
+                      expose_headers: "grpc-status, grpc-message, x-envoy-upstream-service-time"
+                      max_age: "1728000"
+                      allow_credentials: true
+              
+              http_filters:
+                - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
+                    proto_descriptor: pb/pb.pb
+                    services:
+                      # - pb.ServiceOne
+                      - pb.HavlabsAuth
+                    match_incoming_request_route: false # :(
+                    print_options:
+                      add_whitespace: true
+                      always_print_primitive_fields: true
+                      always_print_enums_as_ints: false
+                      preserve_proto_field_names: true
+                      preserve_proto_field_names: true
+                    convert_grpc_status: true
+
+                - name: envoy.filters.http.grpc_web
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
+
+                - name: envoy.extensions.filters.http.cors.v3.Cors # This must be present
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
+
+                - name: envoy.filters.http.jwt_authn
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                    providers:
+                      havlabs_jwt_provider:
+                        issuer: havlabs
+                        local_jwks:
+                          inline_string: >-
+                            {"keys": [
+                              {"kty":"RSA",
+                              "n": "o_-YWIkhVsfbNVHZq7Lf-MWd_j5cbFxXOq_-i53RlXbRdQBlaP-eyQuoPlb16ONQPHRjJi_LLyOuW8erd7pgKlqtPul3Q9m60yJRwtwI-7sU0UHY7AI6j9qVs8N98OhEf0iTos7d-hE0r500rJe6MtYTS_n9_P0P1ZYbQpqfCCM0BHz485a7DT0O2nmeRLBNsP3FtsaNfbxOWAOZuLwv0ON-c439MiSC9NMEyip62X4ziDDD7otPkhLH2fLkWyxHzs-O6XGkiq9XpaJ10TUY1l-fPtaEwBhkD9vgfP_PbkYsFlkHppcGIPYPAllla5N6jrzcaSr9iS1_LdL2qaOBUQ",
+                              "e":"AQAB",
+                              "alg":"RS384",
+                              "use":"sig",
+                              "kid":"oneandonly-jwk-until-further-implementation"}]}
+                        from_headers:
+                          - name: Authorization
+                            value_prefix: "Bearer "
+                        forward: true
+
+                    rules:
+                      - match:
+                          prefix: /pb.HavlabsAuth/UpdateUser # /<package>.<service-name>/<method-name>
+                        requires:
+                          provider_name: havlabs_jwt_provider
+
+                - name: envoy.filters.http.router
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+
+  clusters:
+    - name: grpc1 # Identifier for the cluster
+      connect_timeout: 0.25s # Timeout for connecting to the upstream service
+      type: STRICT_DNS # Cluster discovery type, resolves via DNS
+      lb_policy: ROUND_ROBIN # Load balancing policy, distributes requests evenly across endpoints
+      typed_extension_protocol_options:
+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+          explicit_http_config:
+            http2_protocol_options: {}
+      load_assignment:
+        cluster_name: grpc1 # Identifier for the cluster
+        endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 0.0.0.0 # Hostname or IP address of the endpoint, this is pointing to a docker service
+                    port_value: 50050 # Port number of the endpointStatic Resources
+    - name: grpc2
+      connect_timeout: 0.25s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      typed_extension_protocol_options:
+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+          explicit_http_config:
+            http2_protocol_options: {}
+      load_assignment:
+        cluster_name: grpc2
+        endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 0.0.0.0
+                    port_value: 50051
