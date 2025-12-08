@@ -29,7 +29,7 @@ static_resources:
                         typed_per_filter_config:
                           envoy.filters.http.lua:
                             "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
-                            name: hello.lua
+                            name: onlogin.lua
                       - match: { prefix: "/pb.HavlabsAuth" }
                         route:
                           cluster: grpc1
@@ -50,19 +50,8 @@ static_resources:
                 - name: envoy.filters.http.lua
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
-                    default_source_code:
-                      inline_string: |
-                        -- Called on the request path.
-                        function envoy_on_request(request_handle)
-                          -- print("HELLO WORLD on req")
-                        end
-
-                        -- Called on the response path.
-                        function envoy_on_response(response_handle)
-                          -- print("HELLO WORLD on res")
-                        end
                     source_codes:
-                      hello.lua:
+                      onlogin.lua:
                         inline_string: |
                           function envoy_on_request(request_handle)
                           end
@@ -73,11 +62,25 @@ static_resources:
                             local access_token = body_str:match('"access_token": ?"([^\"]+)')
                             local refresh_token = body_str:match('"refresh_token": ?"([^\"]+)')
 
-                            print(body_str)
+                            body_str = body_str:gsub('"access_token": ?"([^\"]+)"', '"": ""')
+                            body_str = body_str:gsub('"refresh_token": ?"([^\"]+)"', '"": ""')
+                            body_str = body_str:gsub('"access_token_expires_at": ?"([^\"]+)"', '"": ""')
+                            body_str = body_str:gsub('"refresh_token_expires_at": ?"([^\"]+)"', '"": ""')
 
-                            print(access_token)
-                            print()
-                            print(refresh_token)
+                            local name = "World"
+                            response_handle:headers():add(
+                              "Set-Cookie",
+                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600"
+                            )
+
+                            response_handle:headers():add(
+                              "Set-Cookie",
+                              "access_token=" .. refresh_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600"
+                            )
+                            -- TODO: Max-Age for refresh_token should be longer
+
+                            response_handle:body():setBytes(body_str)
+                            response_handle:headers():replace("content-length", #body_str)
                           end
                 - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
                   typed_config:
@@ -132,7 +135,6 @@ static_resources:
                 - name: envoy.filters.http.router
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-
 
   clusters:
     - name: grpc1 # Identifier for the cluster
