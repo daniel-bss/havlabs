@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/spf13/viper"
 )
@@ -16,19 +15,9 @@ type Config struct {
 	DBPort     string `mapstructure:"DB_PORT"`
 	DBSSLMode  string `mapstructure:"DB_SSLMODE"`
 
-	MinUsernameLength int `mapstructure:"MIN_USERNAME_LEN"`
-	MaxUsernameLength int `mapstructure:"MAX_USERNAME_LEN"`
-	MinPwdLength      int `mapstructure:"MIN_PASSWORD_LEN"`
-	MaxPwdLength      int `mapstructure:"MAX_PASSWORD_LEN"`
-
 	MigrationURL string `mapstructure:"MIGRATION_URL"`
 
-	TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
-	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
-	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
-
-	AllowedOrigins    []string `mapstructure:"ALLOWED_ORIGINS"`
-	GRPCServerAddress string   `mapstructure:"GRPC_SERVER_ADDRESS"`
+	GRPCServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
 }
 
 func (c *Config) GetDBSource() string {

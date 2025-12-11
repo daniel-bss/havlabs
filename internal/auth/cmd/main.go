@@ -101,7 +101,7 @@ func runGRPCServer(
 		}),
 	}
 
-	service, err := server.NewGRPC(config, store, taskDistributor)
+	service, err := server.NewGRPCService(config, store, taskDistributor)
 	if err != nil {
 		// log.Fatal().Err(err).Msg("cannot create server")
 		fmt.Println("cannot create gRPC service")

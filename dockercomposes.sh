@@ -7,6 +7,7 @@ fi
 
 yamls=(
     "./internal/auth/docker-compose.yaml"
+    "./internal/news/docker-compose.yaml"
     "./internal/z/docker-compose.yaml"
 )
 
