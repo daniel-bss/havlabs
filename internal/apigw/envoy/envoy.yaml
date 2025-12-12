@@ -87,7 +87,7 @@ static_resources:
 
                             response_handle:headers():add(
                               "Set-Cookie",
-                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=900"
+                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=10"
                             )
 
                             response_handle:headers():add(
