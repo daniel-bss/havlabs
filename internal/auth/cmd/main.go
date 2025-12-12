@@ -126,7 +126,7 @@ func runGRPCServer(
 		err = grpcServer.Serve(listener)
 		if err != nil {
 			if errors.Is(err, grpc.ErrServerStopped) {
-				log.Error().Err(err).Msg("gRPC server failed to serve")
+				log.Error().Err(err).Msg("ErrServerStopped")
 				return nil
 			}
 

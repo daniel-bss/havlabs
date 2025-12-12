@@ -46,7 +46,10 @@ static_resources:
                         route:
                           cluster: grpc_news
                           timeout: 2s
-
+                        request_headers_to_add:
+                          - header: 
+                              key: hehe
+                              value: haha
                     cors:
                       allow_origin_string_match:
                         - prefix: "http://localhost:3000"
@@ -121,6 +124,7 @@ static_resources:
                             response_handle:body():setBytes(body_str)
                             response_handle:headers():replace("content-length", #body_str)
                           end
+
                 - name: envoy.filters.http.grpc_json_transcoder # HTTP router filter, which performs the routing
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
@@ -161,9 +165,12 @@ static_resources:
                               "alg":"RS384",
                               "use":"sig",
                               "kid":"oneandonly-jwk-until-further-implementation"}]}
-                        from_headers:
-                          - name: Authorization
-                            value_prefix: "Bearer "
+                        # from_headers:
+                        #   - name: Authorization
+                        #     value_prefix: "Bearer "
+                        from_cookies:
+                          - access_token
+
                         forward: true
 
                     rules:
