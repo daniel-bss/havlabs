@@ -35,17 +35,18 @@ func (c *Config) GetDBSource() string {
 	return fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", c.DBDriver, c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName, c.DBSSLMode)
 }
 
-func LoadConfig(path string) (config Config, err error) {
+func LoadConfig(path string) (Config, error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigFile(".env")
 
 	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
+	var config Config
+	err := viper.ReadInConfig()
 	if err != nil {
-		return
+		return Config{}, err
 	}
 
 	err = viper.Unmarshal(&config)
-	return
+	return config, err
 }

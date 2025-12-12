@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"math/big"
 	"net"
 	"net/http"
@@ -14,9 +13,6 @@ import (
 	"syscall"
 
 	"buf.build/go/protovalidate"
-	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
-
 	"github.com/daniel-bss/havlabs-proto/pb"
 	db "github.com/daniel-bss/havlabs/internal/auth/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/auth/server"
@@ -25,7 +21,11 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -38,10 +38,12 @@ var interruptSignals = []os.Signal{
 }
 
 func main() {
+	// TODO: if development then:
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
 	config, err := utils.LoadConfig(".")
 	if err != nil {
-		// log.Fatal().Err(err).Msg("cannot load config")
-		fmt.Println("cannot load config")
+		log.Fatal().Err(err).Msg("cannot load config")
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
@@ -49,8 +51,7 @@ func main() {
 
 	connPool, err := pgxpool.New(ctx, config.GetDBSource())
 	if err != nil {
-		// log.Fatal().Err(err).Msg("cannot connect to db")
-		fmt.Println("cannot connect to db")
+		log.Fatal().Err(err).Msg("cannot connect to db")
 	}
 
 	runDBMigration(config.MigrationURL, config.GetDBSource())
@@ -62,25 +63,21 @@ func main() {
 
 	err = waitGroup.Wait()
 	if err != nil {
-		// log.Fatal().Err(err).Msg("error from wait group")
-		fmt.Println("error from wait group")
+		log.Fatal().Err(err).Msg("error from wait group")
 	}
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
 	migration, err := migrate.New(migrationURL, dbSource)
 	if err != nil {
-		// log.Fatal().Err(err).Msg("cannot create new migrate instance")
-		fmt.Println("cannot create new migrate instance")
+		log.Fatal().Err(err).Msg("cannot create new migrate instance")
 	}
 
 	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
-		// log.Fatal().Err(err).Msg("failed to run migrate up")
-		fmt.Println("failed to run migrate up")
+		log.Fatal().Err(err).Msg("failed to run migrate up")
 	}
 
-	// log.Info().Msg("db migrated successfully")
-	fmt.Println("db migrated successfully")
+	log.Info().Msg("db migrated successfully")
 }
 
 func runGRPCServer(
@@ -92,19 +89,19 @@ func runGRPCServer(
 ) {
 	validator, err := protovalidate.New()
 	if err != nil {
-		fmt.Println("failed to create protovalidate validator")
-		return
+		log.Fatal().Err(err).Msg("failed to create protovalidate validator")
 	}
+
 	recoveryOpts := []grpc_recovery.Option{
 		grpc_recovery.WithRecoveryHandler(func(interface{}) error {
+			log.Warn().Err(err).Msg("encountered Internal Server Error")
 			return utils.InternalServerError()
 		}),
 	}
 
 	service, err := server.NewGRPCService(config, store, taskDistributor)
 	if err != nil {
-		// log.Fatal().Err(err).Msg("cannot create server")
-		fmt.Println("cannot create gRPC service")
+		log.Fatal().Err(err).Msg("cannot create gRPC server")
 	}
 
 	grpcServer := grpc.NewServer(
@@ -120,20 +117,20 @@ func runGRPCServer(
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
-		// log.Fatal().Err(err).Msg("cannot create listener")
-		fmt.Println("cannot create listener")
+		log.Fatal().Err(err).Msg("cannot create listener")
 	}
 
 	waitGroup.Go(func() error {
-		fmt.Printf("start gRPC server at %s\n", listener.Addr().String())
+		log.Info().Msgf("serving gRPC server at %s\n", listener.Addr().String())
 
 		err = grpcServer.Serve(listener)
 		if err != nil {
 			if errors.Is(err, grpc.ErrServerStopped) {
+				log.Error().Err(err).Msg("gRPC server failed to serve")
 				return nil
 			}
-			// log.Error().Err(err).Msg("gRPC server failed to serve")
-			fmt.Println("gRPC server failed to serve")
+
+			log.Error().Err(err).Msg("gRPC server failed to serve")
 			return err
 		}
 
@@ -142,8 +139,10 @@ func runGRPCServer(
 
 	waitGroup.Go(func() error {
 		<-ctx.Done()
-		fmt.Println("graceful shutdown gRPC server")
+
+		log.Info().Msg("graceful shutdown gRPC server")
 		grpcServer.GracefulStop()
+
 		return nil
 	})
 }
@@ -167,10 +166,15 @@ func runHTTPServer(config utils.Config) {
 			"e":   base64.RawURLEncoding.EncodeToString(big.NewInt(int64(pubKey.E)).Bytes()),
 		})
 		if err != nil {
-			fmt.Println("failed to encode JWKS")
+			log.Fatal().Err(err).Msg("failed to encode JWKS")
 		}
 	})
+
 	port := ":8081"
-	fmt.Printf("Server starting on port %s\n", port)
-	fmt.Println(http.ListenAndServe(port, mux))
+	log.Info().Msgf("Server starting on port %s\n", port)
+
+	err := http.ListenAndServe(port, mux)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to start HTTP server")
+	}
 }
