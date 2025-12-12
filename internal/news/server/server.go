@@ -1,12 +1,8 @@
 package server
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/daniel-bss/havlabs-proto/pb"
 	"github.com/daniel-bss/havlabs/internal/news/utils"
-	"google.golang.org/grpc/metadata"
 )
 
 type Server struct {
@@ -23,13 +19,4 @@ func NewGRPCService(config utils.Config) (*Server, error) {
 	}
 
 	return server, nil
-}
-
-func (server *Server) GetNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
-	// mtdt := server.extractMetadata(ctx)
-	if md, ok := metadata.FromIncomingContext(ctx); ok {
-		fmt.Println(md)
-	}
-	fmt.Println()
-	return &pb.NewsResponse{Title: "TEST"}, nil
 }
