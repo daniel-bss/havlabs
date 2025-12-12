@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	buf.build/go/protovalidate v1.1.0
-	github.com/daniel-bss/havlabs-proto v0.0.0-20251211215858-c7bc3a18d040
+	github.com/daniel-bss/havlabs-proto v0.0.0-20251212223118-328483993748
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0

@@ -22,3 +22,6 @@ SET
 WHERE
     id = sqlc.arg(id)
 RETURNING id;
+
+-- name: DeleteNews :one
+UPDATE news SET deleted_at=now() RETURNING id;

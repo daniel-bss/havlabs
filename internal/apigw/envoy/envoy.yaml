@@ -178,10 +178,10 @@ static_resources:
                           prefix: /pb.HavlabsAuth/UpdateUser # /<package>.<service-name>/<method-name>
                         requires:
                           provider_name: havlabs_jwt_provider
-                      - match:
-                          prefix: /pb.HavlabsNews/GetNews 
-                        requires:
-                          provider_name: havlabs_jwt_provider
+                      # - match:
+                      #     prefix: /pb.HavlabsNews/GetNews 
+                      #   requires:
+                      #     provider_name: havlabs_jwt_provider
 
                 - name: envoy.filters.http.router
                   typed_config:

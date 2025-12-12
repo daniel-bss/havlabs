@@ -25,6 +25,8 @@ github.com/containerd/errdefs/pkg v0.3.0/go.mod h1:NJw6s9HwNuRhnjJhM7pylWwMyAkmC
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/daniel-bss/havlabs-proto v0.0.0-20251211215858-c7bc3a18d040 h1:nbS3erihJettYXmTzkd/qrjXfLjrcpsnSH+QqDGtokA=
 github.com/daniel-bss/havlabs-proto v0.0.0-20251211215858-c7bc3a18d040/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251212223118-328483993748 h1:MhwL5vMrxE5j3JA72CRIfWbWW0FJuO9TTk18/2ohLUI=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251212223118-328483993748/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

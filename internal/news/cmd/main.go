@@ -12,10 +12,11 @@ import (
 	"github.com/daniel-bss/havlabs-proto/pb"
 	db "github.com/daniel-bss/havlabs/internal/news/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/news/server"
+	"github.com/daniel-bss/havlabs/internal/news/usecases"
 	"github.com/daniel-bss/havlabs/internal/news/utils"
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4"                     // important for golang-migrate
+	_ "github.com/golang-migrate/migrate/v4/database/postgres" // important for golang-migrate
+	_ "github.com/golang-migrate/migrate/v4/source/file"       // important for golang-migrate
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -36,25 +37,28 @@ func main() {
 	// TODO: if development then:
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
+	// config
 	config, err := utils.LoadConfig(".")
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot load config")
 	}
 
+	// context
 	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
 	defer stop()
 
+	// connection pool
 	connPool, err := pgxpool.New(ctx, config.GetDBSource())
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot connect to db")
 	}
 
+	// db migration
 	runDBMigration(config.MigrationURL, config.GetDBSource())
 
-	store := db.NewStore(connPool)
-
+	// waitgroup
 	waitGroup, ctx := errgroup.WithContext(ctx)
-	runGRPCServer(ctx, waitGroup, config, store)
+	runGRPCServer(ctx, waitGroup, config, connPool)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -79,7 +83,7 @@ func runGRPCServer(
 	ctx context.Context,
 	waitGroup *errgroup.Group,
 	config utils.Config,
-	store db.Store,
+	connPool *pgxpool.Pool,
 	// taskDistributor any,
 ) {
 	validator, err := protovalidate.New()
@@ -94,7 +98,10 @@ func runGRPCServer(
 		}),
 	}
 
-	service, err := server.NewGRPCService(config)
+	// init store, usecase, server
+	store := db.NewStore(connPool)
+	usecase := usecases.New(store)
+	service, err := server.NewGRPCService(config, usecase)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gRPC server")
 	}

@@ -12,6 +12,7 @@ import (
 
 type Querier interface {
 	CreateNews(ctx context.Context, arg CreateNewsParams) (uuid.UUID, error)
+	DeleteNews(ctx context.Context) (uuid.UUID, error)
 	GetAllNews(ctx context.Context) (News, error)
 	GetOneNews(ctx context.Context, id uuid.UUID) (News, error)
 	UpdateNews(ctx context.Context, arg UpdateNewsParams) (uuid.UUID, error)

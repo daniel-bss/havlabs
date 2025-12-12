@@ -1,18 +1,13 @@
 package usecases
 
-import "github.com/daniel-bss/havlabs/internal/news/dtos"
+import (
+	"context"
+
+	db "github.com/daniel-bss/havlabs/internal/news/db/sqlc"
+	"github.com/daniel-bss/havlabs/internal/news/dtos"
+)
 
 type NewsUsecase interface {
-	GetNews() []dtos.NewsDto
-}
-
-type NewsUsecaseImpl struct {
-}
-
-func New() NewsUsecase {
-	return &NewsUsecaseImpl{}
-}
-
-func (uc *NewsUsecaseImpl) GetNews() []dtos.NewsDto {
-	return []dtos.NewsDto{}
+	GetNews(context.Context) []dtos.NewsDto
+	CreateNews(context.Context, db.CreateNewsParams) []dtos.NewsDto
 }
