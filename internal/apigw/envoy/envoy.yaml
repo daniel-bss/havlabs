@@ -19,13 +19,13 @@ static_resources:
                     routes:
                       - match: { prefix: "/", headers: [ { name: ":method", exact_match: "OPTIONS" } ] }
                         route:
-                          cluster: grpc1
+                          # host_rewrite_literal: upstream.com
+                          cluster: grpc_auth
                           timeout: 2s
                       - match:
                           prefix: "/pb.HavlabsAuth/Login"
                         route:
-                          # host_rewrite_literal: upstream.com
-                          cluster: grpc1
+                          cluster: grpc_auth
                         typed_per_filter_config:
                           envoy.filters.http.lua:
                             "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
@@ -33,14 +33,18 @@ static_resources:
                       - match:
                           prefix: "/pb.HavlabsAuth/RenewToken"
                         route:
-                          cluster: grpc1
+                          cluster: grpc_auth
                         typed_per_filter_config:
                           envoy.filters.http.lua:
                             "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                             name: onrefreshtoken.lua
                       - match: { prefix: "/pb.HavlabsAuth" }
                         route:
-                          cluster: grpc1
+                          cluster: grpc_auth
+                          timeout: 2s
+                      - match: { prefix: "/pb.HavlabsNews" }
+                        route:
+                          cluster: grpc_news
                           timeout: 2s
 
                     cors:
@@ -124,6 +128,7 @@ static_resources:
                     services:
                       # - pb.ServiceOne
                       - pb.HavlabsAuth
+                      - pb.HavlabsNews
                     match_incoming_request_route: false # :(
                     print_options:
                       add_whitespace: true
@@ -172,7 +177,7 @@ static_resources:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
-    - name: grpc1 # Identifier for the cluster
+    - name: grpc_auth # Identifier for the cluster
       connect_timeout: 0.25s # Timeout for connecting to the upstream service
       type: STRICT_DNS # Cluster discovery type, resolves via DNS
       lb_policy: ROUND_ROBIN # Load balancing policy, distributes requests evenly across endpoints
@@ -182,7 +187,7 @@ static_resources:
           explicit_http_config:
             http2_protocol_options: {}
       load_assignment:
-        cluster_name: grpc1 # Identifier for the cluster
+        cluster_name: grpc_auth # Identifier for the cluster
         endpoints:
           - lb_endpoints:
             - endpoint:
@@ -190,7 +195,8 @@ static_resources:
                   socket_address:
                     address: 0.0.0.0 # Hostname or IP address of the endpoint, this is pointing to a docker service
                     port_value: 50050 # Port number of the endpointStatic Resources
-    - name: grpc2
+
+    - name: grpc_news
       connect_timeout: 0.25s
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -200,7 +206,7 @@ static_resources:
           explicit_http_config:
             http2_protocol_options: {}
       load_assignment:
-        cluster_name: grpc2
+        cluster_name: grpc_news
         endpoints:
           - lb_endpoints:
             - endpoint:
