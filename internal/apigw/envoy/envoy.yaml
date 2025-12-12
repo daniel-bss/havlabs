@@ -46,10 +46,6 @@ static_resources:
                         route:
                           cluster: grpc_news
                           timeout: 2s
-                        request_headers_to_add:
-                          - header: 
-                              key: hehe
-                              value: haha
                     cors:
                       allow_origin_string_match:
                         - prefix: "http://localhost:3000"
@@ -85,9 +81,10 @@ static_resources:
                             body_str = body_str:gsub('"access_token_expires_at": ?"([^\"]+)"', '"": ""')
                             body_str = body_str:gsub('"refresh_token_expires_at": ?"([^\"]+)"', '"": ""')
 
+                            -- IMPORTANT: access_token expiry must match auth ".env", and "onrefreshtoken.lua"
                             response_handle:headers():add(
                               "Set-Cookie",
-                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=10"
+                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=900"
                             )
 
                             response_handle:headers():add(
@@ -118,7 +115,7 @@ static_resources:
 
                             response_handle:headers():add(
                               "Set-Cookie",
-                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=10"
+                              "access_token=" .. access_token .. "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=900"
                             )
 
                             response_handle:body():setBytes(body_str)
@@ -170,12 +167,19 @@ static_resources:
                         #     value_prefix: "Bearer "
                         from_cookies:
                           - access_token
+                        claim_to_headers:
+                          - header_name: x-username
+                            claim_name: username
 
                         forward: true
 
                     rules:
                       - match:
                           prefix: /pb.HavlabsAuth/UpdateUser # /<package>.<service-name>/<method-name>
+                        requires:
+                          provider_name: havlabs_jwt_provider
+                      - match:
+                          prefix: /pb.HavlabsNews/GetNews 
                         requires:
                           provider_name: havlabs_jwt_provider
 
