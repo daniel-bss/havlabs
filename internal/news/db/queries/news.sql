@@ -7,6 +7,16 @@ INSERT INTO news(
     $1, $2, $3
 ) RETURNING id;
 
+-- name: CreateNewsWithPublishDate :one
+INSERT INTO news(
+    creator_username,
+    title,
+    content,
+    created_at
+) VALUES (
+    $1, $2, $3, $4
+) RETURNING id;
+
 -- name: GetOneNews :one
 SELECT * FROM news WHERE id = $1;
 

@@ -35,6 +35,36 @@ func (q *Queries) CreateNews(ctx context.Context, arg CreateNewsParams) (uuid.UU
 	return id, err
 }
 
+const createNewsWithPublishDate = `-- name: CreateNewsWithPublishDate :one
+INSERT INTO news(
+    creator_username,
+    title,
+    content,
+    created_at
+) VALUES (
+    $1, $2, $3, $4
+) RETURNING id
+`
+
+type CreateNewsWithPublishDateParams struct {
+	CreatorUsername string           `json:"creator_username"`
+	Title           string           `json:"title"`
+	Content         string           `json:"content"`
+	CreatedAt       pgtype.Timestamp `json:"created_at"`
+}
+
+func (q *Queries) CreateNewsWithPublishDate(ctx context.Context, arg CreateNewsWithPublishDateParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, createNewsWithPublishDate,
+		arg.CreatorUsername,
+		arg.Title,
+		arg.Content,
+		arg.CreatedAt,
+	)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const deleteNews = `-- name: DeleteNews :one
 UPDATE news SET deleted_at=now() RETURNING id
 `
