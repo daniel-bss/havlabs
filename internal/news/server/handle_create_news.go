@@ -2,15 +2,18 @@ package server
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/daniel-bss/havlabs-proto/pb"
-	"github.com/google/uuid"
 )
 
-func (server *Server) CreateNews(ctx context.Context, req *pb.OneNewsIdRequest) (*pb.NewsIdResponse, error) {
-	fmt.Println("create")
+// TODO: limit maximum characters
+func (server *Server) CreateNews(ctx context.Context, req *pb.CreateNewsRequest) (*pb.NewsIdResponse, error) {
+	id, err := server.uc.CreateNews(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.NewsIdResponse{
-		Id: uuid.New().String(),
+		Id: id.String(),
 	}, nil
 }

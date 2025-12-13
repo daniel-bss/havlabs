@@ -2,10 +2,11 @@ package usecases
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/daniel-bss/havlabs-proto/pb"
 	db "github.com/daniel-bss/havlabs/internal/news/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/news/dtos"
+	"github.com/google/uuid"
 )
 
 type NewsUsecaseImpl struct {
@@ -18,17 +19,21 @@ func New(store db.Store) NewsUsecase {
 	}
 }
 
-func (uc *NewsUsecaseImpl) GetNews(ctx context.Context) []dtos.NewsDto {
-	return []dtos.NewsDto{}
+func (uc *NewsUsecaseImpl) GetNews(ctx context.Context) ([]dtos.NewsDto, error) {
+	news, err := uc.store.GetAllNews(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return dtos.ConvertNewsArray(news), nil
 }
 
-func (uc *NewsUsecaseImpl) CreateNews(ctx context.Context, arg db.CreateNewsParams) []dtos.NewsDto {
-	id, err := uc.store.CreateNews(ctx, arg)
-	if err != nil {
-		// return id, err
-		fmt.Println("wah", err)
-		return []dtos.NewsDto{}
+func (uc *NewsUsecaseImpl) CreateNews(ctx context.Context, req *pb.CreateNewsRequest) (uuid.UUID, error) {
+	arg := db.CreateNewsParams{
+		CreatorUsername: req.CreatorUsername,
+		Title:           req.Title,
+		Content:         req.Content,
 	}
-	fmt.Println("mantap", id)
-	return []dtos.NewsDto{}
+
+	return uc.store.CreateNews(ctx, arg)
 }

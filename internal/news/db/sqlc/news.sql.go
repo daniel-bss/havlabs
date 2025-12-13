@@ -46,23 +46,36 @@ func (q *Queries) DeleteNews(ctx context.Context) (uuid.UUID, error) {
 	return id, err
 }
 
-const getAllNews = `-- name: GetAllNews :one
+const getAllNews = `-- name: GetAllNews :many
 SELECT id, creator_username, title, content, created_at, updated_at, deleted_at FROM news
 `
 
-func (q *Queries) GetAllNews(ctx context.Context) (News, error) {
-	row := q.db.QueryRow(ctx, getAllNews)
-	var i News
-	err := row.Scan(
-		&i.ID,
-		&i.CreatorUsername,
-		&i.Title,
-		&i.Content,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-	)
-	return i, err
+func (q *Queries) GetAllNews(ctx context.Context) ([]News, error) {
+	rows, err := q.db.Query(ctx, getAllNews)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []News{}
+	for rows.Next() {
+		var i News
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatorUsername,
+			&i.Title,
+			&i.Content,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getOneNews = `-- name: GetOneNews :one

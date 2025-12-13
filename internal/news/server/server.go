@@ -14,9 +14,9 @@ type Server struct {
 	// taskDistributor worker.TaskDistributor
 }
 
-func NewGRPCService(config utils.Config, uc usecases.NewsUsecase) (*Server, error) {
+func NewGRPCService(config utils.Config, usecase usecases.NewsUsecase) (*Server, error) {
 	return &Server{
 		config: config,
-		uc:     uc,
+		uc:     usecase,
 	}, nil
 }

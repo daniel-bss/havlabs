@@ -54,7 +54,7 @@ func main() {
 	}
 
 	// db migration
-	runDBMigration(config.MigrationURL, config.GetDBSource())
+	runDBMigration(config.MigrationURL, connPool)
 
 	// waitgroup
 	waitGroup, ctx := errgroup.WithContext(ctx)
@@ -66,17 +66,20 @@ func main() {
 	}
 }
 
-func runDBMigration(migrationURL string, dbSource string) {
-	migration, err := migrate.New(migrationURL, dbSource)
+func runDBMigration(migrationURL string, connPool *pgxpool.Pool) {
+	connString := connPool.Config().ConnConfig.ConnString()
+	migration, err := migrate.New(migrationURL, connString)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create new migrate instance")
 	}
 
-	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+	if err = migration.Up(); err == nil {
+		runSeeder(connPool)
+	} else if err != migrate.ErrNoChange {
 		log.Fatal().Err(err).Msg("failed to run migrate up")
 	}
 
-	log.Info().Msg("news db migrated successfully")
+	log.Info().Msg("successfully migrated DB: news")
 }
 
 func runGRPCServer(
@@ -92,7 +95,7 @@ func runGRPCServer(
 	}
 
 	recoveryOpts := []grpc_recovery.Option{
-		grpc_recovery.WithRecoveryHandler(func(interface{}) error {
+		grpc_recovery.WithRecoveryHandler(func(any) error {
 			log.Warn().Err(err).Msg("encountered Internal Server Error")
 			return utils.InternalServerError()
 		}),
@@ -148,3 +151,11 @@ func runGRPCServer(
 		return nil
 	})
 }
+
+/*
+TODO:
+select from view
+materialized view vs caching
+indexing
+
+*/

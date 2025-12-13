@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	buf.build/go/protovalidate v1.1.0
-	github.com/daniel-bss/havlabs-proto v0.0.0-20251212223118-328483993748
+	github.com/daniel-bss/havlabs-proto v0.0.0-20251213200135-5a45b767d490
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
@@ -15,6 +15,7 @@ require (
 	golang.org/x/sync v0.18.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251124214823-79d6a2a48846
 	google.golang.org/grpc v1.77.0
+	google.golang.org/protobuf v1.36.10
 )
 
 require (
@@ -45,5 +46,4 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
-	google.golang.org/protobuf v1.36.10 // indirect
 )

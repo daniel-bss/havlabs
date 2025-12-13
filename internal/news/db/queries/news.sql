@@ -10,7 +10,7 @@ INSERT INTO news(
 -- name: GetOneNews :one
 SELECT * FROM news WHERE id = $1;
 
--- name: GetAllNews :one
+-- name: GetAllNews :many
 SELECT * FROM news;
 
 -- name: UpdateNews :one

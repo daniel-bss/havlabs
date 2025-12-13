@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (server *Server) DeleteNews(ctx context.Context, req *pb.OneNewsIdRequest) (*pb.NewsIdResponse, error) {
+func (server *Server) DeleteNews(ctx context.Context, req *pb.GetOneNewsByIdRequest) (*pb.NewsIdResponse, error) {
 	fmt.Print("delete")
 	return &pb.NewsIdResponse{
 		Id: uuid.New().String(),

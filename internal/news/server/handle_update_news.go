@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (server *Server) UpdateNews(ctx context.Context, req *pb.OneNewsIdRequest) (*pb.NewsIdResponse, error) {
+func (server *Server) UpdateNews(ctx context.Context, req *pb.UpdateNewsByIdRequest) (*pb.NewsIdResponse, error) {
 	fmt.Println("update")
 	return &pb.NewsIdResponse{
 		Id: uuid.New().String(),

@@ -29,7 +29,7 @@ func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.G
 	}, nil
 }
 
-func (server *Server) GetOneNews(ctx context.Context, req *pb.OneNewsIdRequest) (*pb.GetOneNewsResponse, error) {
+func (server *Server) GetOneNews(ctx context.Context, req *pb.GetOneNewsByIdRequest) (*pb.GetOneNewsResponse, error) {
 	fmt.Println("get one")
 	return &pb.GetOneNewsResponse{Title: "TEST"}, nil
 }

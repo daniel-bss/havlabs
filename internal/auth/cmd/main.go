@@ -77,7 +77,7 @@ func runDBMigration(migrationURL string, dbSource string) {
 		log.Fatal().Err(err).Msg("failed to run migrate up")
 	}
 
-	log.Info().Msg("auth db migrated successfully")
+	log.Info().Msg("successfully migrated DB: auth")
 }
 
 func runGRPCServer(
