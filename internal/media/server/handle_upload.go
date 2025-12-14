@@ -10,5 +10,8 @@ import (
 
 func (server *Server) CreateUploadURL(ctx context.Context, req *emptypb.Empty) (*pb.SomeResponse, error) {
 	fmt.Println("ok")
-	return &pb.SomeResponse{Url: "tets"}, nil
+
+	uploadUrl := server.uc.CreateUpload(ctx)
+
+	return &pb.SomeResponse{Url: uploadUrl}, nil
 }

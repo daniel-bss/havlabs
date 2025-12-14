@@ -10,6 +10,7 @@ import (
 
 	"buf.build/go/protovalidate"
 	"github.com/daniel-bss/havlabs-proto/pb"
+	"github.com/daniel-bss/havlabs/internal/media/client"
 	"github.com/daniel-bss/havlabs/internal/media/server"
 	"github.com/daniel-bss/havlabs/internal/media/usecases"
 	"github.com/daniel-bss/havlabs/internal/media/utils"
@@ -71,7 +72,8 @@ func runGRPCServer(
 	}
 
 	// init store, usecase, server
-	usecase := usecases.New()
+	minioClient := client.NewMinio()
+	usecase := usecases.New(minioClient)
 	service, err := server.NewGRPCService(config, usecase)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gRPC server")
