@@ -121,7 +121,7 @@ func runGRPCServer(
 	}
 
 	waitGroup.Go(func() error {
-		log.Info().Msgf("serving gRPC server at %s\n", listener.Addr().String())
+		log.Info().Msgf("serving auth service at %s\n", listener.Addr().String())
 
 		err = grpcServer.Serve(listener)
 		if err != nil {
