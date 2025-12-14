@@ -46,6 +46,10 @@ static_resources:
                         route:
                           cluster: grpc_news
                           timeout: 2s
+                      - match: { prefix: "/pb.HavlabsMedia" }
+                        route:
+                          cluster: grpc_media
+                          timeout: 2s
                     cors:
                       allow_origin_string_match:
                         - prefix: "http://localhost:3000"
@@ -130,6 +134,7 @@ static_resources:
                       # - pb.ServiceOne
                       - pb.HavlabsAuth
                       - pb.HavlabsNews
+                      - pb.HavlabsMedia
                     match_incoming_request_route: false # :(
                     print_options:
                       add_whitespace: true
@@ -225,3 +230,22 @@ static_resources:
                   socket_address:
                     address: 0.0.0.0
                     port_value: 50051
+
+    - name: grpc_media # Identifier for the cluster
+      connect_timeout: 0.25s # Timeout for connecting to the upstream service
+      type: STRICT_DNS # Cluster discovery type, resolves via DNS
+      lb_policy: ROUND_ROBIN # Load balancing policy, distributes requests evenly across endpoints
+      typed_extension_protocol_options:
+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+          explicit_http_config:
+            http2_protocol_options: {}
+      load_assignment:
+        cluster_name: grpc_media # Identifier for the cluster
+        endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 0.0.0.0 # Hostname or IP address of the endpoint, this is pointing to a docker service
+                    port_value: 50052 # Port number of the endpointStatic Resources
