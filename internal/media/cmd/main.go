@@ -71,9 +71,9 @@ func runGRPCServer(
 		}),
 	}
 
-	// init store, usecase, server
-	minioClient := client.NewMinio()
-	usecase := usecases.New(minioClient)
+	// init minio, store, usecase, server
+	minioManager := client.NewMinioManager(config)
+	usecase := usecases.New(minioManager)
 	service, err := server.NewGRPCService(config, usecase)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gRPC server")

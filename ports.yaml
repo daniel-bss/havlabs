@@ -1,0 +1,22 @@
+frontend:
+    nextjs_port: 3000
+
+apigw:
+    rest_port: 8080
+
+backend:
+    - auth:
+        db_port: 5432
+        grpc_port: 50050
+
+    - news:
+        db_port: 5433
+        grpc_port: 50051
+
+
+    - media:
+        db_port: 5434
+        grpc_port: 50052
+        minio:
+            server: 9000
+            browser: 9001

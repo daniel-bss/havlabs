@@ -79,7 +79,7 @@ func runDBMigration(migrationURL string, connPool *pgxpool.Pool) {
 		log.Fatal().Err(err).Msg("failed to run migrate up")
 	}
 
-	log.Info().Msg("successfully migrated DB: news")
+	log.Info().Msg("news DB successfully migrated")
 }
 
 func runGRPCServer(

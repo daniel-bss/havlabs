@@ -133,7 +133,6 @@ static_resources:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
                     proto_descriptor: pb/pb.pb
                     services:
-                      # - pb.ServiceOne
                       - pb.HavlabsAuth
                       - pb.HavlabsNews
                       - pb.HavlabsMedia
@@ -182,13 +181,9 @@ static_resources:
 
                     rules:
                       - match:
-                          prefix: /pb.HavlabsAuth/UpdateUser # /<package>.<service-name>/<method-name>
+                          prefix: /pb.HavlabsAuth/UpdateUser # format: /<package>.<service-name>/<method-name>
                         requires:
                           provider_name: havlabs_jwt_provider
-                      # - match:
-                      #     prefix: /pb.HavlabsNews/GetNews 
-                      #   requires:
-                      #     provider_name: havlabs_jwt_provider
 
                 - name: envoy.filters.http.router
                   typed_config:

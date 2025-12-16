@@ -8,7 +8,7 @@ fi
 yamls=(
     "./internal/auth/docker-compose.yaml"
     "./internal/news/docker-compose.yaml"
-    "./internal/z/docker-compose.yaml"
+    "./internal/media/docker-compose.yaml"
 )
 
 for yaml in "${yamls[@]}"; do
