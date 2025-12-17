@@ -145,7 +145,7 @@ func runGRPCServer(
 	waitGroup.Go(func() error {
 		<-ctx.Done()
 
-		log.Info().Msg("graceful shutdown gRPC server")
+		log.Info().Msg("graceful shutdown news gRPC server")
 		grpcServer.GracefulStop()
 
 		return nil

@@ -36,7 +36,7 @@ upload_img:
 	curl -X PUT \
 	-H "Content-Type: image/png" \
 	--upload-file ./temp.png \
-	"http://localhost:9000/havlabs/images/20bf06ee-29e9-40f3-a5e3-f120176f93e8.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251216%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251216T071247Z&X-Amz-Expires=120&X-Amz-SignedHeaders=host&X-Amz-Signature=8c8770cfd12e8e43dc598e8c00f39759694eadd47b1cb9c12a9962b316c240b1"
+	"http://localhost:9000/havlabs/images/b9070510-77e9-4d41-b156-f417131818cb.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251216%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251216T102458Z&X-Amz-Expires=120&X-Amz-SignedHeaders=host&X-Amz-Signature=3e65d292290fa09ad584ea3b459cef1d57284e57b0cb3077e2cfd6c6b80c496f"
 
 
 .PHONY: evans sqlc new_migration migrateup migrateup1 migratedown migratedown1 run cpenv gogetproto upload_img

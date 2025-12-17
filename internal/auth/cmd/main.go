@@ -41,14 +41,17 @@ func main() {
 	// TODO: if development then:
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
+	// config
 	config, err := utils.LoadConfig(".")
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot load config")
 	}
 
+	// context
 	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
 	defer stop()
 
+	// connection pool
 	connPool, err := pgxpool.New(ctx, config.GetDBSource())
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot connect to db")
@@ -140,7 +143,7 @@ func runGRPCServer(
 	waitGroup.Go(func() error {
 		<-ctx.Done()
 
-		log.Info().Msg("graceful shutdown gRPC server")
+		log.Info().Msg("graceful shutdown auth gRPC server")
 		grpcServer.GracefulStop()
 
 		return nil

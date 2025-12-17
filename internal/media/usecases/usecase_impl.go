@@ -8,6 +8,7 @@ import (
 
 	"github.com/daniel-bss/havlabs/internal/media/client"
 	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
 	"github.com/rs/zerolog/log"
 )
 
@@ -32,6 +33,25 @@ func (uc *newsUsecaseImpl) CreateUpload(ctx context.Context) (string, error) {
 		log.Error().Err(err).Msg("failed when PresignedPutObject")
 		return "", err
 	}
+
+	o := fmt.Sprintf("images/%s.png", "b9070510-77e9-4d41-b156-f417131818cb")
+	x, err := client.StatObject(ctx, bucketName, o, minio.GetObjectOptions{})
+	// object_key = article/<user_id>/<media_id> for staging
+
+	/*
+		CREATE TYPE media_status AS ENUM (
+		  'pending',
+		  'uploaded',
+		  'ready',
+		  'failed'
+		);
+
+	*/
+
+	if err != nil {
+		fmt.Println("err", err)
+	}
+	fmt.Println(">>", x.Metadata)
 
 	reqParams := make(url.Values)
 	// reqParams.Add("Content-Type", "image/png")
