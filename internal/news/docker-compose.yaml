@@ -13,8 +13,8 @@ services:
       timeout: 10s
     ports:
       - "${DB_PORT}:5432"
-    # volumes:
-    #   - news-volume:/var/lib/postgresql/data
+    volumes:
+      - news-volume:/var/lib/postgresql
 
   # redis:
   #   image: redis:7-alpine
@@ -32,5 +32,5 @@ services:
   #   entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
   #   command: [ "/app/main" ]
 
-# volumes:
-#   news-volume:
+volumes:
+  news-volume:
