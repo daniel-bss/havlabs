@@ -23,6 +23,9 @@ migratedown:
 migratedown1:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
+migrateforce:
+	migrate -path db/migration -database "$(DB_URL)" force 1
+
 run:
 	go run ./cmd
 
@@ -34,9 +37,8 @@ gogetproto:
 
 upload_img:
 	curl -X PUT \
-	-H "Content-Type: image/png" \
-	--upload-file ./temp.png \
-	"http://localhost:9000/havlabs/images/b9070510-77e9-4d41-b156-f417131818cb.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251216%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251216T102458Z&X-Amz-Expires=120&X-Amz-SignedHeaders=host&X-Amz-Signature=3e65d292290fa09ad584ea3b459cef1d57284e57b0cb3077e2cfd6c6b80c496f"
-
+	--upload-file ./temp/a.png \
+	-H "Content-Type: image/png" \ 
+	"http://localhost:9000/staging/news/717fd2e1-b4f8-4ad4-80fd-3656064c69e4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251218%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251218T113410Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=de33b15f73a60d1e61230a07a5ec78f49277ce61f1bf763f13cd3746464930b5"
 
 .PHONY: evans sqlc new_migration migrateup migrateup1 migratedown migratedown1 run cpenv gogetproto upload_img

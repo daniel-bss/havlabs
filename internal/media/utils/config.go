@@ -23,14 +23,18 @@ type Config struct {
 	MinioUseSSL       string `mapstructure:"X_MINIO_USESSL"`
 	MinioBucketName   string `mapstructure:"X_MINIO_BUCKETNAME"`
 
-	MigrationURL string `mapstructure:"MIGRATION_URL"`
+	MigrationURL   string `mapstructure:"MIGRATION_URL"`
+	MaxImageSizeMB string `mapstructure:"MAX_IMAGE_SIZE_MB"`
 
-	GRPCServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
+	PresignedUrlDurationMinutes string `mapstructure:"PRESIGNEDURL_DURATION_MINUTES"`
+	GRPCServerAddress           string `mapstructure:"GRPC_SERVER_ADDRESS"`
 }
 
 func (c *Config) GetDBSource() string {
 	return fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", c.DBDriver, c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName, c.DBSSLMode)
 }
+
+var MaxImageSize int64
 
 func LoadConfig(path string) (config Config, err error) {
 	viper.AddConfigPath(path)
@@ -44,5 +48,7 @@ func LoadConfig(path string) (config Config, err error) {
 	}
 
 	err = viper.Unmarshal(&config)
+
+	MaxImageSize = int64(ParseInt(config.MaxImageSizeMB)) * 1024 * 1024
 	return
 }

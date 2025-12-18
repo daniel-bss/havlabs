@@ -39,3 +39,15 @@ func InternalServerError() error {
 func FailedCreateAccessToken() error {
 	return status.Errorf(codes.Internal, "failed to create access token")
 }
+
+type BadRequestError struct {
+	msg string
+}
+
+func NewBadRequestError(s string) error {
+	return BadRequestError{msg: s}
+}
+
+func (e BadRequestError) Error() string {
+	return e.msg
+}

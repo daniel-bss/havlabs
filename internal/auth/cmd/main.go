@@ -57,12 +57,11 @@ func main() {
 		log.Fatal().Err(err).Msg("cannot connect to db")
 	}
 
-	runDBMigration(config.MigrationURL, config.GetDBSource())
-
-	store := db.NewStore(connPool)
+	// db migration
+	runDBMigration(config.MigrationURL, connPool)
 
 	waitGroup, ctx := errgroup.WithContext(ctx)
-	runGRPCServer(ctx, waitGroup, config, store, nil)
+	runGRPCServer(ctx, waitGroup, config, connPool, nil)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -70,8 +69,9 @@ func main() {
 	}
 }
 
-func runDBMigration(migrationURL string, dbSource string) {
-	migration, err := migrate.New(migrationURL, dbSource)
+func runDBMigration(migrationURL string, connPool *pgxpool.Pool) {
+	connString := connPool.Config().ConnConfig.ConnString()
+	migration, err := migrate.New(migrationURL, connString)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create new migrate instance")
 	}
@@ -87,7 +87,7 @@ func runGRPCServer(
 	ctx context.Context,
 	waitGroup *errgroup.Group,
 	config utils.Config,
-	store db.Store,
+	connPool *pgxpool.Pool,
 	taskDistributor any,
 ) {
 	validator, err := protovalidate.New()
@@ -102,6 +102,7 @@ func runGRPCServer(
 		}),
 	}
 
+	store := db.NewStore(connPool)
 	service, err := server.NewGRPCService(config, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gRPC server")

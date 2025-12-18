@@ -157,7 +157,7 @@ static_resources:
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
                     providers:
-                      havlabs_jwt_provider:
+                      havlabs_auth_provider:
                         issuer: havlabs
                         local_jwks:
                           inline_string: >-
@@ -176,14 +176,20 @@ static_resources:
                         claim_to_headers:
                           - header_name: x-username
                             claim_name: username
-
                         forward: true
-
                     rules:
                       - match:
                           prefix: /pb.HavlabsAuth/UpdateUser # format: /<package>.<service-name>/<method-name>
                         requires:
-                          provider_name: havlabs_jwt_provider
+                          provider_name: havlabs_auth_provider
+                      - match:
+                          prefix: /pb.HavlabsNews # format: /<package>.<service-name>/<method-name>
+                        requires:
+                          provider_name: havlabs_auth_provider
+                      - match:
+                          prefix: /pb.HavlabsMedia # format: /<package>.<service-name>/<method-name>
+                        requires:
+                          provider_name: havlabs_auth_provider
 
                 - name: envoy.filters.http.router
                   typed_config:

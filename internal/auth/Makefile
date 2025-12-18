@@ -23,6 +23,9 @@ migratedown:
 migratedown1:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
+migrateforce:
+	migrate -path db/migration -database "$(DB_URL)" force 1
+
 run:
 	go run ./cmd
 

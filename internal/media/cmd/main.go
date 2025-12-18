@@ -11,6 +11,7 @@ import (
 	"buf.build/go/protovalidate"
 	"github.com/daniel-bss/havlabs-proto/pb"
 	"github.com/daniel-bss/havlabs/internal/media/client"
+	db "github.com/daniel-bss/havlabs/internal/media/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/media/server"
 	"github.com/daniel-bss/havlabs/internal/media/usecases"
 	"github.com/daniel-bss/havlabs/internal/media/utils"
@@ -58,7 +59,7 @@ func main() {
 
 	// waitgroup
 	waitGroup, ctx := errgroup.WithContext(ctx)
-	runGRPCServer(ctx, waitGroup, config)
+	runGRPCServer(ctx, waitGroup, config, connPool)
 
 	err = waitGroup.Wait()
 	if err != nil {
@@ -84,6 +85,7 @@ func runGRPCServer(
 	ctx context.Context,
 	waitGroup *errgroup.Group,
 	config utils.Config,
+	connPool *pgxpool.Pool,
 	// taskDistributor any,
 ) {
 	validator, err := protovalidate.New()
@@ -99,8 +101,9 @@ func runGRPCServer(
 	}
 
 	// init minio, store, usecase, server
-	minioManager := client.NewMinioManager(config)
-	usecase := usecases.New(minioManager)
+	store := db.NewStore(connPool)
+	minioManager := client.NewMinioManager(ctx, config)
+	usecase := usecases.New(minioManager, store)
 	service, err := server.NewGRPCService(config, usecase)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gRPC server")

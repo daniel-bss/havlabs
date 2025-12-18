@@ -11,16 +11,19 @@ import (
 )
 
 type MinioManager interface {
+	GetStagingBucketName() string
 	GetBucketName() string
 	GetClient() *minio.Client
 }
 
 type minioManagerImpl struct {
-	client     *minio.Client
-	bucketName string
+	client            *minio.Client
+	stagingBucketName string
+	bucketName        string
 }
 
-func NewMinioManager(config utils.Config) MinioManager {
+func NewMinioManager(ctx context.Context, config utils.Config) MinioManager {
+	// client
 	endpoint := fmt.Sprintf("%s:%s", config.MinioHost, config.MinioServerPort)
 	accessKeyID := config.MinioRootUser
 	secretAccessKey := config.MinioRootPassword
@@ -28,7 +31,7 @@ func NewMinioManager(config utils.Config) MinioManager {
 	useSSL := utils.ParseBool(config.MinioUseSSL)
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""), // TODO: token?
 		Secure: useSSL,
 	})
 	if err != nil {
@@ -37,25 +40,21 @@ func NewMinioManager(config utils.Config) MinioManager {
 
 	log.Info().Msg("successfully init MinIO client")
 
+	// buckets
+	stagingBucketName := "staging"
 	bucketName := config.MinioBucketName
-	location := ""
+	location := "" // TODO: location?
+	opts := minio.MakeBucketOptions{Region: location}
 
-	ctx := context.Background()
-	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
-	if err != nil {
-		exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
-		if errBucketExists == nil && exists {
-			log.Info().Err(err).Msgf("bucket %s already exists", bucketName)
-		} else {
-			log.Fatal().Err(err).Msg("error when making bucket")
-		}
-	}
+	makeBucket(minioClient, ctx, stagingBucketName, opts)
+	makeBucket(minioClient, ctx, bucketName, opts)
 
-	log.Info().Msgf("successfully created bucket: %s", bucketName)
+	log.Info().Msgf("successfully created bucket: %s, %s", stagingBucketName, bucketName)
 
 	return &minioManagerImpl{
-		client:     minioClient,
-		bucketName: bucketName,
+		client:            minioClient,
+		stagingBucketName: stagingBucketName,
+		bucketName:        bucketName,
 	}
 }
 
@@ -63,6 +62,22 @@ func (m *minioManagerImpl) GetBucketName() string {
 	return m.bucketName
 }
 
+func (m *minioManagerImpl) GetStagingBucketName() string {
+	return m.stagingBucketName
+}
+
 func (m *minioManagerImpl) GetClient() *minio.Client {
 	return m.client
+}
+
+func makeBucket(client *minio.Client, ctx context.Context, bucketName string, opts minio.MakeBucketOptions) {
+	err := client.MakeBucket(ctx, bucketName, opts)
+	if err != nil {
+		exists, errBucketExists := client.BucketExists(ctx, bucketName)
+		if errBucketExists == nil && exists {
+			log.Info().Err(err).Msgf("bucket %s already exists", bucketName)
+		} else {
+			log.Fatal().Err(err).Msgf("error when making bucket: %s", bucketName)
+		}
+	}
 }
