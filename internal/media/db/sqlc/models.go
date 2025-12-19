@@ -60,6 +60,7 @@ func (ns NullStatusTypes) Value() (driver.Value, error) {
 type Medium struct {
 	ID                  uuid.UUID          `json:"id"`
 	OwnerUsername       string             `json:"owner_username"`
+	FileName            string             `json:"file_name"`
 	Purpose             string             `json:"purpose"`
 	Bucket              string             `json:"bucket"`
 	ObjectKey           string             `json:"object_key"`

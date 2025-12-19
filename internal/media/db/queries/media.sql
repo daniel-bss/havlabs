@@ -2,6 +2,7 @@
 INSERT INTO media (
   id,
   owner_username,
+  file_name,
 
   purpose,
   bucket,
@@ -9,7 +10,7 @@ INSERT INTO media (
 
   declared_content_type
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 ) RETURNING id;
 
 
@@ -42,4 +43,4 @@ WHERE
 RETURNING id;
 
 -- name: GetMediaById :one
-SELECT id, purpose FROM media WHERE id=$1;
+SELECT id, purpose, bucket FROM media WHERE id=$1;

@@ -22,11 +22,16 @@ func (uc *newsUsecaseImpl) ConfirmUpload(ctx context.Context, req *pb.ConfirmUpl
 	// validate UUID
 	id, err := uuid.Parse(req.MediaId)
 	if err != nil {
-		fmt.Println(err)
 		return nil, utils.NewBadRequestError("invalid media id")
 	}
 	media, err := uc.store.GetMediaById(ctx, id)
 	if err != nil {
+		return nil, utils.NewBadRequestError("invalid media id")
+	}
+
+	// handle if media has been promoted from staging
+	stagingBucket := uc.minioManager.GetStagingBucketName()
+	if media.Bucket != stagingBucket {
 		return nil, utils.NewBadRequestError("invalid media id")
 	}
 
@@ -47,7 +52,6 @@ func (uc *newsUsecaseImpl) ConfirmUpload(ctx context.Context, req *pb.ConfirmUpl
 
 	// prepare client, bucket, staging bucket, objectKey
 	client := uc.minioManager.GetClient()
-	stagingBucket := uc.minioManager.GetStagingBucketName()
 	bucket := uc.minioManager.GetBucketName()
 	objectKey := fmt.Sprintf("%s/%s", media.Purpose, media.ID)
 	opts := minio.StatObjectOptions{}
@@ -164,36 +168,6 @@ func (uc *newsUsecaseImpl) ConfirmUpload(ctx context.Context, req *pb.ConfirmUpl
 
 	return &dtos.ConfirmUpload{
 		MediaId: mediaId.String(),
-		Status:  pb.StatusEnum_READY,
+		Status:  pb.StatusEnum_ready,
 	}, nil
 }
-
-/*
-src := minio.CopySrcOptions{
-    Bucket: "media-staging",
-    Object: "article/u123/abc",
-}
-
-dst := minio.CopyDestOptions{
-    Bucket: "media-public",
-    Object: "article/u123/abc.png",
-}
-
-info, err := minioClient.CopyObject(ctx, dst, src)
-if err != nil {
-    return err
-}
-
-delete
-
-err = minioClient.RemoveObject(
-    ctx,
-    "media-staging",
-    "article/u123/abc",
-    minio.RemoveObjectOptions{},
-)
-if err != nil {
-    return err
-}
-
-*/

@@ -45,6 +45,7 @@ func (uc *newsUsecaseImpl) CreateUploadSession(ctx context.Context, durationMinu
 	arg := db.CreateUploadParams{
 		ID:                  mediaId,
 		OwnerUsername:       username,
+		FileName:            req.FileName,
 		Purpose:             req.Purpose,
 		DeclaredContentType: req.ContentType,
 		Bucket:              stagingBucket,

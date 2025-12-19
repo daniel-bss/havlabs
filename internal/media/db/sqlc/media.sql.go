@@ -59,6 +59,7 @@ const createUpload = `-- name: CreateUpload :one
 INSERT INTO media (
   id,
   owner_username,
+  file_name,
 
   purpose,
   bucket,
@@ -66,13 +67,14 @@ INSERT INTO media (
 
   declared_content_type
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 ) RETURNING id
 `
 
 type CreateUploadParams struct {
 	ID                  uuid.UUID `json:"id"`
 	OwnerUsername       string    `json:"owner_username"`
+	FileName            string    `json:"file_name"`
 	Purpose             string    `json:"purpose"`
 	Bucket              string    `json:"bucket"`
 	ObjectKey           string    `json:"object_key"`
@@ -83,6 +85,7 @@ func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (uui
 	row := q.db.QueryRow(ctx, createUpload,
 		arg.ID,
 		arg.OwnerUsername,
+		arg.FileName,
 		arg.Purpose,
 		arg.Bucket,
 		arg.ObjectKey,
@@ -94,18 +97,19 @@ func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (uui
 }
 
 const getMediaById = `-- name: GetMediaById :one
-SELECT id, purpose FROM media WHERE id=$1
+SELECT id, purpose, bucket FROM media WHERE id=$1
 `
 
 type GetMediaByIdRow struct {
 	ID      uuid.UUID `json:"id"`
 	Purpose string    `json:"purpose"`
+	Bucket  string    `json:"bucket"`
 }
 
 func (q *Queries) GetMediaById(ctx context.Context, id uuid.UUID) (GetMediaByIdRow, error) {
 	row := q.db.QueryRow(ctx, getMediaById, id)
 	var i GetMediaByIdRow
-	err := row.Scan(&i.ID, &i.Purpose)
+	err := row.Scan(&i.ID, &i.Purpose, &i.Bucket)
 	return i, err
 }
 

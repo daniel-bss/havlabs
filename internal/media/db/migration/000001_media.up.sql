@@ -3,6 +3,7 @@ CREATE TYPE status_types AS ENUM ('pending', 'uploaded', 'ready', 'failed');
 CREATE TABLE media (
     id UUID PRIMARY KEY NOT NULL,
     owner_username TEXT NOT NULL,
+    file_name TEXT NOT NULL,
 
     purpose TEXT NOT NULL,
     bucket TEXT NOT NULL,

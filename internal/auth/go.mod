@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	buf.build/go/protovalidate v1.0.1
 	github.com/aead/chacha20poly1305 v0.0.0-20201124145622-1a5aba2a8b29
-	github.com/daniel-bss/havlabs-proto v0.0.0-20251217094633-63db7bcde169
+	github.com/daniel-bss/havlabs-proto v0.0.0-20251219091352-e22a85a704d4
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/google/uuid v1.6.0
