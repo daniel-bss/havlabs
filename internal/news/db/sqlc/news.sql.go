@@ -14,22 +14,29 @@ import (
 
 const createNews = `-- name: CreateNews :one
 INSERT INTO news(
+    media_id,
     creator_username,
     title,
     content
 ) VALUES (
-    $1, $2, $3
+    $1, $2, $3, $4
 ) RETURNING id
 `
 
 type CreateNewsParams struct {
-	CreatorUsername string `json:"creator_username"`
-	Title           string `json:"title"`
-	Content         string `json:"content"`
+	MediaID         uuid.UUID `json:"media_id"`
+	CreatorUsername string    `json:"creator_username"`
+	Title           string    `json:"title"`
+	Content         string    `json:"content"`
 }
 
 func (q *Queries) CreateNews(ctx context.Context, arg CreateNewsParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createNews, arg.CreatorUsername, arg.Title, arg.Content)
+	row := q.db.QueryRow(ctx, createNews,
+		arg.MediaID,
+		arg.CreatorUsername,
+		arg.Title,
+		arg.Content,
+	)
 	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err
@@ -77,7 +84,7 @@ func (q *Queries) DeleteNews(ctx context.Context) (uuid.UUID, error) {
 }
 
 const getAllNews = `-- name: GetAllNews :many
-SELECT id, creator_username, title, content, created_at, updated_at, deleted_at FROM news
+SELECT id, media_id, creator_username, title, content, created_at, updated_at, deleted_at FROM news
 `
 
 func (q *Queries) GetAllNews(ctx context.Context) ([]News, error) {
@@ -91,6 +98,7 @@ func (q *Queries) GetAllNews(ctx context.Context) ([]News, error) {
 		var i News
 		if err := rows.Scan(
 			&i.ID,
+			&i.MediaID,
 			&i.CreatorUsername,
 			&i.Title,
 			&i.Content,
@@ -109,7 +117,7 @@ func (q *Queries) GetAllNews(ctx context.Context) ([]News, error) {
 }
 
 const getOneNews = `-- name: GetOneNews :one
-SELECT id, creator_username, title, content, created_at, updated_at, deleted_at FROM news WHERE id = $1
+SELECT id, media_id, creator_username, title, content, created_at, updated_at, deleted_at FROM news WHERE id = $1
 `
 
 func (q *Queries) GetOneNews(ctx context.Context, id uuid.UUID) (News, error) {
@@ -117,6 +125,7 @@ func (q *Queries) GetOneNews(ctx context.Context, id uuid.UUID) (News, error) {
 	var i News
 	err := row.Scan(
 		&i.ID,
+		&i.MediaID,
 		&i.CreatorUsername,
 		&i.Title,
 		&i.Content,

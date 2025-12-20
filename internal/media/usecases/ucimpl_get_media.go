@@ -34,7 +34,7 @@ func (uc *newsUsecaseImpl) GetMediaById(ctx context.Context, req *pb.GetOneMedia
 	objectKey := fmt.Sprintf("%s/%s.%s", media.Purpose, media.ID, imgMetadata.Format)
 	opts := minio.StatObjectOptions{}
 
-	st, err := client.StatObject(ctx, bucket, objectKey, opts)
+	_, err = client.StatObject(ctx, bucket, objectKey, opts)
 	if err != nil {
 		if err.Error() == "The specified key does not exist." {
 			return nil, utils.NewBadRequestError("invalid media id")
@@ -43,7 +43,6 @@ func (uc *newsUsecaseImpl) GetMediaById(ctx context.Context, req *pb.GetOneMedia
 		log.Error().Err(err).Msg("error from StatObject")
 		return nil, err
 	}
-	fmt.Println(st)
 
 	return &dtos.Media{
 		Id: media.ID,

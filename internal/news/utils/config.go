@@ -17,7 +17,8 @@ type Config struct {
 
 	MigrationURL string `mapstructure:"MIGRATION_URL"`
 
-	GRPCServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
+	GRPCServerAddress   string `mapstructure:"GRPC_SERVER_ADDRESS"`
+	MediaServiceAddress string `mapstructure:"MEDIA_SERVICE_ADDRESS"`
 }
 
 func (c *Config) GetDBSource() string {

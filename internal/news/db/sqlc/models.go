@@ -11,6 +11,7 @@ import (
 
 type News struct {
 	ID              uuid.UUID        `json:"id"`
+	MediaID         uuid.UUID        `json:"media_id"`
 	CreatorUsername string           `json:"creator_username"`
 	Title           string           `json:"title"`
 	Content         string           `json:"content"`

@@ -8,17 +8,11 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.GetAllNewsResponse, error) {
-	// mtdt := server.extractMetadata(ctx)
-	// if md, ok := metadata.FromIncomingContext(ctx); ok {
-	// 	fmt.Println(md)
-	// }
-
+func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.ListNewsResponse, error) {
 	fmt.Println("get all")
 
-	// return &pb.NewsResponse{Title: "TEST"}, nil
-	return &pb.GetAllNewsResponse{
-		News: []*pb.GetOneNewsResponse{
+	return &pb.ListNewsResponse{
+		News: []*pb.OneNewsResponse{
 			{
 				Title: "hehe1",
 			},
@@ -29,7 +23,7 @@ func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.G
 	}, nil
 }
 
-func (server *Server) GetOneNews(ctx context.Context, req *pb.GetOneNewsByIdRequest) (*pb.GetOneNewsResponse, error) {
+func (server *Server) GetOneNews(ctx context.Context, req *pb.GetOneNewsByIdRequest) (*pb.OneNewsResponse, error) {
 	fmt.Println("get one")
-	return &pb.GetOneNewsResponse{Title: "TEST"}, nil
+	return &pb.OneNewsResponse{Title: "TEST"}, nil
 }

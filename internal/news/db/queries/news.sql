@@ -1,10 +1,11 @@
 -- name: CreateNews :one
 INSERT INTO news(
+    media_id,
     creator_username,
     title,
     content
 ) VALUES (
-    $1, $2, $3
+    $1, $2, $3, $4
 ) RETURNING id;
 
 -- name: CreateNewsWithPublishDate :one

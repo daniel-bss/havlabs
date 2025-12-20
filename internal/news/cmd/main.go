@@ -10,6 +10,7 @@ import (
 
 	"buf.build/go/protovalidate"
 	"github.com/daniel-bss/havlabs-proto/pb"
+	"github.com/daniel-bss/havlabs/internal/news/client"
 	db "github.com/daniel-bss/havlabs/internal/news/db/sqlc"
 	"github.com/daniel-bss/havlabs/internal/news/server"
 	"github.com/daniel-bss/havlabs/internal/news/usecases"
@@ -24,6 +25,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -74,7 +76,7 @@ func runDBMigration(migrationURL string, connPool *pgxpool.Pool) {
 	}
 
 	if err = migration.Up(); err == nil {
-		runSeeder(connPool)
+		// runSeeder(connPool)
 	} else if err != migrate.ErrNoChange {
 		log.Fatal().Err(err).Msg("failed to run migrate up")
 	}
@@ -102,8 +104,13 @@ func runGRPCServer(
 	}
 
 	// init store, usecase, server
+	conn, err := grpc.NewClient(config.MediaServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials())) // TODO: secure?
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot create Media Service client")
+	}
 	store := db.NewStore(connPool)
-	usecase := usecases.New(store)
+	mediaClient := client.NewMediaClient(conn)
+	usecase := usecases.New(store, mediaClient)
 	service, err := server.NewGRPCService(config, usecase)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gRPC server")
@@ -147,6 +154,7 @@ func runGRPCServer(
 
 		log.Info().Msg("graceful shutdown news gRPC server")
 		grpcServer.GracefulStop()
+		conn.Close()
 
 		return nil
 	})
