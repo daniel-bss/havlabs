@@ -42,6 +42,9 @@ func IsValidPurpose(s string) bool {
 }
 
 func IsValidContentType(s string) bool {
+	if s == "image/webp" {
+		return true
+	}
 	_, ok := contentTypes[s]
 	return ok
 }

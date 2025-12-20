@@ -2,5 +2,9 @@
 .vscode
 **.env
 **/private.pem
-internal/media/temp
 **/.DS_Store
+misc
+
+internal/media/temp
+
+

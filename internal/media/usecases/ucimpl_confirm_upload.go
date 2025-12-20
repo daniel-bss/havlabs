@@ -75,7 +75,7 @@ func (uc *newsUsecaseImpl) ConfirmUpload(ctx context.Context, req *pb.ConfirmUpl
 		if err != nil {
 			return nil, err
 		}
-		return nil, utils.NewBadRequestError("invalid mime")
+		return nil, utils.NewBadRequestError(fmt.Sprintf("invalid mime: %s", mime))
 	}
 
 	// checksum

@@ -38,6 +38,12 @@ gogetproto:
 upload_img:
 	curl -X PUT  \
 	--upload-file ./temp/a.png \
-	"http://localhost:9000/staging/news/fede7aa0-6a12-4f3e-9783-f7be86638b85?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251219%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251219T092047Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=e27f38b30bc51484c5132f93a213b15499b08e203ae6618f3e5a8be73fdaeb8b"
+	"http://localhost:9000/staging/news/374c0b1a-1de6-4c1f-afea-a6de3f4aea2e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251220%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251220T070906Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=05e451efba53bec38b65fc311989f112561032f25ed064936bbd28d390bd645e"
+
+backup:
+	docker container run --rm --name dummybak --mount "type=bind,source=./temp/backup,destination=/backup" --mount "type=volume,source=media_media-volume,destination=/data" ubuntu:latest tar cvf /backup/backup.tar.gz /data
+
+restore:
+	docker container run --rm --name dummyres --mount "type=bind,source=./temp/backup,destination=/backup" --mount "type=volume,source=media_media-backup,destination=/data" ubuntu:latest bash -c "cd /data && tar xvf /backup/backup.tar.gz --strip 1"
 
 .PHONY: evans sqlc new_migration migrateup migrateup1 migratedown migratedown1 run cpenv gogetproto upload_img
