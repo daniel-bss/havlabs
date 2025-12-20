@@ -38,7 +38,7 @@ gogetproto:
 upload_img:
 	curl -X PUT  \
 	--upload-file ./temp/a.png \
-	"http://localhost:9000/staging/news/374c0b1a-1de6-4c1f-afea-a6de3f4aea2e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251220%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251220T070906Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=05e451efba53bec38b65fc311989f112561032f25ed064936bbd28d390bd645e"
+	"http://localhost:9000/staging/news/cf3db533-8e90-46af-80f9-9588eca839f7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=media%2F20251220%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251220T125420Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=96f919203a435ef960cbed7eebf6a5d891ce5b7a29593e48c26cdb52e94d2426"
 
 backup:
 	docker container run --rm --name dummybak --mount "type=bind,source=./temp/backup,destination=/backup" --mount "type=volume,source=media_media-volume,destination=/data" ubuntu:latest tar cvf /backup/backup.tar.gz /data

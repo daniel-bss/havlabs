@@ -43,4 +43,4 @@ WHERE
 RETURNING id;
 
 -- name: GetMediaById :one
-SELECT id, purpose, bucket FROM media WHERE id=$1;
+SELECT id, purpose, bucket, metadata FROM media WHERE id=$1;

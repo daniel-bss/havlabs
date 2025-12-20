@@ -18,6 +18,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type ImageMetadata struct {
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Format string `json:"format"`
+}
+
 func (uc *newsUsecaseImpl) ConfirmUpload(ctx context.Context, req *pb.ConfirmUploadRequest) (*dtos.ConfirmUpload, error) {
 	// validate UUID
 	id, err := uuid.Parse(req.MediaId)
@@ -96,11 +102,13 @@ func (uc *newsUsecaseImpl) ConfirmUpload(ctx context.Context, req *pb.ConfirmUpl
 		log.Error().Err(err).Msg("error from image.DecodeConfig")
 		return nil, err
 	}
-	imgMetadata, err := json.Marshal(map[string]any{
-		"width":  imgConfig.Width,
-		"height": imgConfig.Height,
-		"format": fileFormat,
-	})
+	imgMetadata, err := json.Marshal(
+		ImageMetadata{
+			Width:  imgConfig.Width,
+			Height: imgConfig.Height,
+			Format: fileFormat,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("error when marshalling metadata")
 		return nil, err

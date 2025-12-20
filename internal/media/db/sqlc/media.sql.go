@@ -97,19 +97,25 @@ func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (uui
 }
 
 const getMediaById = `-- name: GetMediaById :one
-SELECT id, purpose, bucket FROM media WHERE id=$1
+SELECT id, purpose, bucket, metadata FROM media WHERE id=$1
 `
 
 type GetMediaByIdRow struct {
-	ID      uuid.UUID `json:"id"`
-	Purpose string    `json:"purpose"`
-	Bucket  string    `json:"bucket"`
+	ID       uuid.UUID `json:"id"`
+	Purpose  string    `json:"purpose"`
+	Bucket   string    `json:"bucket"`
+	Metadata []byte    `json:"metadata"`
 }
 
 func (q *Queries) GetMediaById(ctx context.Context, id uuid.UUID) (GetMediaByIdRow, error) {
 	row := q.db.QueryRow(ctx, getMediaById, id)
 	var i GetMediaByIdRow
-	err := row.Scan(&i.ID, &i.Purpose, &i.Bucket)
+	err := row.Scan(
+		&i.ID,
+		&i.Purpose,
+		&i.Bucket,
+		&i.Metadata,
+	)
 	return i, err
 }
 

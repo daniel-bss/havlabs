@@ -12,6 +12,7 @@ import (
 type NewsUsecase interface {
 	CreateUploadSession(context.Context, int, *pb.CreateUploadSessionRequest) (*dtos.UploadSession, error)
 	ConfirmUpload(context.Context, *pb.ConfirmUploadRequest) (*dtos.ConfirmUpload, error)
+	GetMediaById(context.Context, *pb.GetOneMediaByIdRequest) (*dtos.Media, error)
 }
 
 type newsUsecaseImpl struct {
