@@ -24,9 +24,11 @@ services:
       - "${X_MINIO_SERVER_PORT}:9000"
       - "${X_MINIO_BROWSER_PORT}:9001"
     volumes:
-      - media-volume:/data
+      - minio-volume:/data
     command: ["server", "/data", "--console-address", ":9001"]
 
 volumes:
   media-volume:
   media-backup:
+  minio-volume:
+  minio-backup:

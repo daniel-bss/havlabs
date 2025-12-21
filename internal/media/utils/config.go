@@ -26,8 +26,10 @@ type Config struct {
 	MigrationURL   string `mapstructure:"MIGRATION_URL"`
 	MaxImageSizeMB string `mapstructure:"MAX_IMAGE_SIZE_MB"`
 
-	PresignedUrlDurationMinutes string `mapstructure:"PRESIGNEDURL_DURATION_MINUTES"`
-	GRPCServerAddress           string `mapstructure:"GRPC_SERVER_ADDRESS"`
+	PresignedPUTUrlDurationMinutes string `mapstructure:"PRESIGNED_PUT_URL_DURATION_MINUTES"`
+	PresignedGETUrlDurationMinutes string `mapstructure:"PRESIGNED_GET_URL_DURATION_MINUTES"`
+
+	GRPCServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
 }
 
 func (c *Config) GetDBSource() string {

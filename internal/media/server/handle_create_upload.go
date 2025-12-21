@@ -11,7 +11,7 @@ import (
 )
 
 func (server *Server) CreateUploadSession(ctx context.Context, req *pb.CreateUploadSessionRequest) (*pb.CreateUploadSessionResponse, error) {
-	uploadSession, err := server.uc.CreateUploadSession(ctx, utils.ParseInt(server.config.PresignedUrlDurationMinutes), req)
+	uploadSession, err := server.uc.CreateUploadSession(ctx, utils.ParseInt(server.config.PresignedPUTUrlDurationMinutes), req)
 	if err != nil {
 		log.Error().Err(err).Msg("error from media/CreateUploadSession")
 
