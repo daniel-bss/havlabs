@@ -14,7 +14,7 @@ type Querier interface {
 	CreateNews(ctx context.Context, arg CreateNewsParams) (uuid.UUID, error)
 	CreateNewsWithPublishDate(ctx context.Context, arg CreateNewsWithPublishDateParams) (uuid.UUID, error)
 	DeleteNews(ctx context.Context) (uuid.UUID, error)
-	GetAllNews(ctx context.Context) ([]News, error)
+	GetNews(ctx context.Context, arg GetNewsParams) ([]News, error)
 	GetOneNews(ctx context.Context, id uuid.UUID) (News, error)
 	UpdateNews(ctx context.Context, arg UpdateNewsParams) (uuid.UUID, error)
 }

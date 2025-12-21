@@ -11,4 +11,5 @@ CREATE TABLE news (
 
 CREATE INDEX idx_news_id ON news(id);
 CREATE INDEX idx_news_media ON news(media_id);
+CREATE INDEX idx_news_createdat ON news(created_at);
 

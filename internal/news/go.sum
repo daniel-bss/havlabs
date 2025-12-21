@@ -35,6 +35,16 @@ github.com/daniel-bss/havlabs-proto v0.0.0-20251220173459-ef9697ee0e17 h1:/0zSXi
 github.com/daniel-bss/havlabs-proto v0.0.0-20251220173459-ef9697ee0e17/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
 github.com/daniel-bss/havlabs-proto v0.0.0-20251221100204-1a183b05c368 h1:HoOPSkjHsIrNWz228rLBlmkw94j3iGlPawvcaoTQvfE=
 github.com/daniel-bss/havlabs-proto v0.0.0-20251221100204-1a183b05c368/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221124933-a826c7b34cb2 h1:ri+b9+88on7xyxSvWVahhVmbB48YYdQaJNKl9xfMH7Q=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221124933-a826c7b34cb2/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221182426-ea5e2aaa8066 h1:lkFrkA9D1DgvFyuEqiZ9vsD9y85f5Tm9snD1wuyuank=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221182426-ea5e2aaa8066/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221190613-ac3386f113c0 h1:zPwFYe2FU1F7IJGs8RgkZlWlJ07n4/qHQhqBg8uzdV0=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221190613-ac3386f113c0/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221191105-a4279fb012a7 h1:Z6d3El92g8aUm37vttToLKcf3MN9g0lN4A33N2P6Bd4=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221191105-a4279fb012a7/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221192750-c32f46ee5efa h1:SSDnZCl8NIhYOtMFt0hhDZ+bS0ooZpvr64fk+udgYU8=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221192750-c32f46ee5efa/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

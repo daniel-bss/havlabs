@@ -10,14 +10,13 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.ListNewsResponse, error) {
-	news, err := server.uc.GetNews(ctx)
+func (server *Server) GetPaginatedNews(ctx context.Context, req *pb.ListNewsRequest) (*pb.ListNewsResponse, error) {
+	news, tot, err := server.uc.GetNews(ctx, req)
 	if err != nil {
-		log.Error().Err(err).Msg("error from media/CreateNews")
+		log.Error().Err(err).Msg("error from media/GetNews")
 
 		if e, ok := err.(utils.BadRequestError); ok {
 			return nil, status.Error(codes.InvalidArgument, e.Error())
@@ -35,7 +34,8 @@ func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.L
 	})
 
 	return &pb.ListNewsResponse{
-		News: result,
+		News:       result,
+		TotalPages: tot,
 	}, nil
 }
 

@@ -11,7 +11,7 @@ import (
 )
 
 type NewsUsecase interface {
-	GetNews(context.Context) ([]dtos.NewsDto, error)
+	GetNews(ctx context.Context, req *pb.ListNewsRequest) ([]dtos.NewsDto, uint32, error)
 	CreateNews(context.Context, *pb.CreateNewsRequest) (*uuid.UUID, error)
 }
 

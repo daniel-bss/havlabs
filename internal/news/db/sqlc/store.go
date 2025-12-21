@@ -1,6 +1,8 @@
 package db
 
 import (
+	"context"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -8,6 +10,8 @@ import (
 type Store interface {
 	Querier
 	// CreateUserTx(ctx context.Context, arg CreateUserTxParams) (CreateUserTxResult, error)
+
+	ListNews(ctx context.Context, arg ListNewsParams) ([]News, uint32, error)
 }
 
 // SQLStore provides all functions to execute SQL queries and transactions

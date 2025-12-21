@@ -21,3 +21,12 @@ func TimeFromString(s string, format string) time.Time {
 	date, _ := time.Parse(format, s)
 	return date
 }
+
+func ValidateSortBy(s string) (string, bool) {
+	v, ok := map[string]string{
+		"TITLE":        "title",
+		"PUBLISHED_AT": "created_at",
+	}[s]
+
+	return v, ok
+}

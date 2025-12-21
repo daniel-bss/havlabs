@@ -33,7 +33,7 @@ cpenv:
 	cp .env .env.example
 
 gogetproto:
-	go get github.com/daniel-bss/havlabs-proto
+	go get github.com/daniel-bss/havlabs-proto@c32f46e
 
 
 .PHONY: evans sqlc new_migration migrateup migrateup1 migratedown migratedown1 run cpenv gogetproto

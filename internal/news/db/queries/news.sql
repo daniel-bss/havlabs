@@ -21,8 +21,8 @@ INSERT INTO news(
 -- name: GetOneNews :one
 SELECT * FROM news WHERE id = $1;
 
--- name: GetAllNews :many
-SELECT * FROM news;
+-- name: GetNews :many
+SELECT * FROM news WHERE created_at > $4 AND title ILIKE $1 AND content = $2 ORDER BY $3 ASC;
 
 -- name: UpdateNews :one
 UPDATE news

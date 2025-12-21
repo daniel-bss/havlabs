@@ -83,12 +83,24 @@ func (q *Queries) DeleteNews(ctx context.Context) (uuid.UUID, error) {
 	return id, err
 }
 
-const getAllNews = `-- name: GetAllNews :many
-SELECT id, media_id, creator_username, title, content, created_at, updated_at, deleted_at FROM news
+const getNews = `-- name: GetNews :many
+SELECT id, media_id, creator_username, title, content, created_at, updated_at, deleted_at FROM news WHERE created_at > $4 AND title ILIKE $1 AND content = $2 ORDER BY $3 ASC
 `
 
-func (q *Queries) GetAllNews(ctx context.Context) ([]News, error) {
-	rows, err := q.db.Query(ctx, getAllNews)
+type GetNewsParams struct {
+	Title     string           `json:"title"`
+	Content   string           `json:"content"`
+	Column3   interface{}      `json:"column_3"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+}
+
+func (q *Queries) GetNews(ctx context.Context, arg GetNewsParams) ([]News, error) {
+	rows, err := q.db.Query(ctx, getNews,
+		arg.Title,
+		arg.Content,
+		arg.Column3,
+		arg.CreatedAt,
+	)
 	if err != nil {
 		return nil, err
 	}
