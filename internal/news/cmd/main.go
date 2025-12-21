@@ -75,12 +75,11 @@ func runDBMigration(migrationURL string, connPool *pgxpool.Pool) {
 		log.Fatal().Err(err).Msg("cannot create new migrate instance")
 	}
 
-	if err = migration.Up(); err == nil {
-		// runSeeder(connPool)
-	} else if err != migrate.ErrNoChange {
-		log.Fatal().Err(err).Msg("failed to run migrate up")
+	if err = migration.Up(); err != nil {
+		if err != migrate.ErrNoChange {
+			log.Fatal().Err(err).Msg("failed to run migrate up")
+		}
 	}
-
 	log.Info().Msg("news DB successfully migrated")
 }
 

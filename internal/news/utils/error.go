@@ -36,10 +36,6 @@ func InternalServerError() error {
 	return status.Errorf(codes.Internal, "UNEXPECTED_ERROR")
 }
 
-func FailedCreateAccessToken() error {
-	return status.Errorf(codes.Internal, "failed to create access token")
-}
-
 type BadRequestError struct {
 	msg string
 }
@@ -50,4 +46,8 @@ func NewBadRequestError(s string) error {
 
 func (e BadRequestError) Error() string {
 	return e.msg
+}
+
+func ProviderError(msg string) error {
+	return status.Errorf(codes.Internal, msg)
 }

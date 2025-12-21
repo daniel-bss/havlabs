@@ -5,21 +5,37 @@ import (
 	"fmt"
 
 	"github.com/daniel-bss/havlabs-proto/pb"
+	"github.com/daniel-bss/havlabs/internal/news/dtos"
+	"github.com/daniel-bss/havlabs/internal/news/utils"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (server *Server) GetAllNews(ctx context.Context, req *emptypb.Empty) (*pb.ListNewsResponse, error) {
-	fmt.Println("get all")
+	news, err := server.uc.GetNews(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("error from media/CreateNews")
+
+		if e, ok := err.(utils.BadRequestError); ok {
+			return nil, status.Error(codes.InvalidArgument, e.Error())
+		}
+		return nil, err
+	}
+
+	result := utils.Map(news, func(b dtos.NewsDto) *pb.OneNewsResponse {
+		return &pb.OneNewsResponse{
+			Title:       b.Title,
+			Content:     b.Content,
+			ImageUrl:    b.ImageURL,
+			PublishedAt: timestamppb.New(b.PublishedAt.Time),
+		}
+	})
 
 	return &pb.ListNewsResponse{
-		News: []*pb.OneNewsResponse{
-			{
-				Title: "hehe1",
-			},
-			{
-				Title: "hehe2",
-			},
-		},
+		News: result,
 	}, nil
 }
 

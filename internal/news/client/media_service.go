@@ -10,6 +10,7 @@ import (
 
 type MediaClient interface {
 	GetMediaById(context.Context, uuid.UUID) (*uuid.UUID, error)
+	GetMediaUrlString(context.Context, uuid.UUID) (string, error)
 }
 
 type mediaClientImpl struct {
@@ -34,4 +35,13 @@ func (mc *mediaClientImpl) GetMediaById(ctx context.Context, id uuid.UUID) (*uui
 	}
 
 	return &mediaId, nil
+}
+
+func (mc *mediaClientImpl) GetMediaUrlString(ctx context.Context, id uuid.UUID) (string, error) {
+	mediaUrl, err := mc.grpcClient.GetMediaURL(ctx, &pb.GetOneMediaByIdRequest{Id: id.String()})
+	if err != nil {
+		return "", err
+	}
+
+	return mediaUrl.Url, nil
 }

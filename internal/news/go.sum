@@ -33,6 +33,8 @@ github.com/daniel-bss/havlabs-proto v0.0.0-20251220122420-946ee2fcc748 h1:OAoTsn
 github.com/daniel-bss/havlabs-proto v0.0.0-20251220122420-946ee2fcc748/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
 github.com/daniel-bss/havlabs-proto v0.0.0-20251220173459-ef9697ee0e17 h1:/0zSXiUZWrNVDdKqCB4wbNrPqo2k683xVjs2AqqBP1M=
 github.com/daniel-bss/havlabs-proto v0.0.0-20251220173459-ef9697ee0e17/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221100204-1a183b05c368 h1:HoOPSkjHsIrNWz228rLBlmkw94j3iGlPawvcaoTQvfE=
+github.com/daniel-bss/havlabs-proto v0.0.0-20251221100204-1a183b05c368/go.mod h1:z9wrLdvnmv54kjSTe7Rz++3BlxPcRC14oiyfYBJe2mY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

@@ -9,3 +9,6 @@ CREATE TABLE news (
     deleted_at timestamp
 );
 
+CREATE INDEX idx_news_id ON news(id);
+CREATE INDEX idx_news_media ON news(media_id);
+
